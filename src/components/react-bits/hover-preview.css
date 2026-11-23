@@ -1,0 +1,57 @@
+/*
+  Restyled to the site system: cream heavy text, red underline (never red text),
+  square image, no shadow. Original blue links and drop shadow removed.
+*/
+
+.hover-preview-container {
+  position: relative;
+}
+
+.hover-preview-target {
+  position: relative;
+  cursor: pointer;
+  font-weight: var(--w-heavy, 850);
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-color: var(--rule, #384752);
+  text-decoration-thickness: 0.12em;
+  text-underline-offset: 0.16em;
+  transition: text-decoration-color 0.2s ease;
+}
+
+.hover-preview-target:hover,
+.hover-preview-target:focus-visible {
+  text-decoration-color: var(--accent, #7a1e24);
+}
+
+.hover-preview-image-wrapper {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  will-change: transform, opacity;
+}
+
+.hover-preview-image-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+
+.hover-preview-image {
+  object-fit: cover;
+  outline: 1px solid var(--rule, #384752);
+}
+
+/* Kept for the prop, but the site always passes showImageShadow={false}. */
+.hover-preview-image-shadow {
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hover-preview-target {
+    transition: none;
+  }
+}

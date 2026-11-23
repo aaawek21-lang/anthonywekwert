@@ -38,7 +38,7 @@ Designer / art director: both titles, on purpose, so neither agency nor in-house
 - Font self-hosted via `@fontsource-variable/museomoderno`.
 - Pages: home (`src/pages/index.astro`), work index, project template (`src/pages/work/[slug].astro`).
 - Contact actions: email link, resume PDF download, LinkedIn link. No Instagram link for now.
-- No React in the site. Any component library has to fit Astro without adding a framework unless he agrees.
+- React is added (via `@astrojs/react`) only for three React Bits Pro components (Starter license): Stipple Type (home hero, WebGL via `three`), Hover Preview, and Scroll Mask. All three are edited to fit the system; in `src/components/react-bits/`. Install more with `npx shadcn@latest add @reactbits-starter/<name>-css`; the license key lives in `.env.local` (gitignored).
 - Hosting and the domain are deliberately out of scope until he says the site is built.
 
 ## Brand Commitments
@@ -56,17 +56,20 @@ Voice: plain and direct. Short sentences, simple words, no hype or marketing lan
 ## Evidence on Hand
 
 Real:
-- Silver and Bronze Addy (AAF, Feb 2026).
-- Brand and Social Media Director, Alpha Sigma Phi MSU chapter.
-- Work to feature (images not yet in the repo): ULM coffee packaging, Twisted Toons "Lemon Ace" can, Lumina Transit Network map, Alpha Sigma Phi phoenix logo, Crunchy's bar posters, Spotify "Everywhere's a Venue" 3-poster concept, Fall 2026 ASP recruitment video (35s vertical). Photography is weaker; if used, cut duplicate sunsets and lead with the Jeep.
+- Projects, from the old Cargo site (anthonywekwert.com), in its order: Vita Lenta (spec beach brand concept; the coffee cups marked "VL", earlier noted as "ULM"), Twisted Toonz (spec hard seltzer packaging; Lemon Ace, Royal Peach, Cherry Bomb cans), Design Studies (coursework and side work: Lumina Transit map, ASP phoenix logo, Sanuk, rush and event flyers), Photography (freelance, Canon Rebel T7; leads with the Jeep, duplicate sunset cut). Titles, one-liners, context, and tools are his own words from those pages. Images in `public/work/<slug>/`, pulled from the Cargo site and resized.
+- About content from the old About page plus the resume, in `src/data/site.ts`.
+- Contact: email anthonywekwertcreative@gmail.com, LinkedIn /in/anthonywekwert, Instagram @_antwek, resume at `public/resume.pdf`.
+- Silver and Bronze Addy (AAF, Feb 2026). Eagle Scout (Sept 2023). Dean's List Fall 2024 – Fall 2025.
 
-Still placeholders. Do not invent these:
-- The three entries in `src/data/projects.ts`, the hero intro line, the about stats, and the teammate quotes on the home page.
-- Project images, the resume PDF, the email address and LinkedIn URL.
+Still missing. Do not invent these:
+- Project years (left empty and hidden).
+- Case-study writing for project pages (pages show the one-liner and images only).
+- The headshot (`public/anthony.jpg`).
+- Teammate quotes.
 
 ## Product Principles
 
-1. The work shows up first. If a hiring person has to scroll or click to see a project, that's a failure.
+1. Same hierarchy as the old site: name first, then what he is, then the work right away (it peeks in under the hero), then About and contact at the bottom.
 2. Every page reads as his hand, the same system as the banner and resume.
 3. Real over filler. A blank placeholder beats a made-up stat or quote.
 4. One clear next step: email, resume, or LinkedIn.

@@ -25,12 +25,16 @@ interface Props {
 const { project, index } = Astro.props;
 const next = projects[(index + 1) % projects.length]!;
 
+// Empty values (like a year that isn't known yet) are left out, not shown as blanks.
 const specs = [
-  ['Role', project.role],
-  ['Discipline', project.discipline],
+  ['Project', project.kind],
+  ['Made at', project.context],
   ['Tools', project.tools],
   ['Year', project.year],
-];
+].filter(([, value]) => value);
+
+// Gallery cycles through three placements so the page keeps an uneven rhythm.
+const slots = ['img-a', 'img-b', 'img-c'];
 ---
 
 <Base title={project.title} description={project.summary}>
@@ -59,34 +63,19 @@ const specs = [
           </dl>
         </section>
 
-        <!--
-          Image placeholders. Mixed widths on purpose: one hero that bleeds
-          off the right edge, then pairs and offsets. Swap for real images.
-        -->
+        <!-- Cover bleeds off the right edge, then the gallery in mixed widths. -->
         <section class="images">
           <figure class="img-lead">
-            <div class="placeholder" style="aspect-ratio: 16 / 10" />
+            <img src={project.image} alt={project.imageAlt} />
           </figure>
 
-          <figure class="img-a">
-            <div class="placeholder" style="aspect-ratio: 4 / 5" />
-          </figure>
-          <figure class="img-b">
-            <div class="placeholder" style="aspect-ratio: 1 / 1" />
-            <figcaption class="label">Placeholder caption. What this detail shows.</figcaption>
-          </figure>
-
-          <div class="note">
-            <h2>Placeholder heading</h2>
-            <p>
-              Placeholder text. A few short sentences on the brief, the idea, and the
-              decisions that mattered. Keep it tight.
-            </p>
-          </div>
-
-          <figure class="img-c">
-            <div class="placeholder" style="aspect-ratio: 3 / 2" />
-          </figure>
+          {
+            project.gallery.map((shot, i) => (
+              <figure class={slots[i % slots.length]}>
+                <img src={shot.src} alt={shot.alt} loading="lazy" />
+              </figure>
+            ))
+          }
         </section>
 
         <a class="next" href={`/work/${next.slug}`}>
@@ -197,6 +186,14 @@ const specs = [
     align-items: end;
   }
 
+  .images figure {
+    margin: 0;
+  }
+  .images img {
+    width: 100%;
+    height: auto;
+  }
+
   .img-lead {
     grid-column: 1 / -1;
     margin-right: calc(var(--gutter) * -1);
@@ -210,27 +207,7 @@ const specs = [
     grid-column: 7 / span 4;
   }
 
-  figcaption {
-    margin-top: var(--s-2);
-    max-width: 32ch;
-  }
 
-  .note {
-    grid-column: 3 / span 5;
-    display: grid;
-    gap: var(--s-3);
-  }
-
-  .note h2 {
-    font-size: var(--t-lg);
-    font-weight: var(--w-heavy);
-    line-height: var(--lh-tight);
-  }
-
-  .note p {
-    color: var(--ink-soft);
-    max-width: 52ch;
-  }
 
   .img-c {
     grid-column: 5 / -1;
@@ -299,7 +276,6 @@ const specs = [
     .specs,
     .img-a,
     .img-b,
-    .note,
     .img-c {
       grid-column: 1;
     }

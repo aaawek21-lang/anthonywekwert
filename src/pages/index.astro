@@ -3,164 +3,92 @@ import Base from '../layouts/Base.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import { projects } from '../data/projects';
 import { pad } from '../lib/format';
+import { site, about } from '../data/site';
+import { existsSync } from 'node:fs';
+import ProjectsLine from '../components/ProjectsLine';
+import LeadProject from '../components/LeadProject';
+import IntroType from '../components/IntroType';
 
-// Placeholder about content. Swap for real numbers and quotes from the resume.
-const stats = [
-  { value: '0X', label: 'Years designing' },
-  { value: '00', label: 'Projects shipped' },
-  { value: '00', label: 'Awards' },
-];
+// Only show images that actually exist.
+const hasPhoto = existsSync(`public${site.photo}`);
 
-const reviews = [
-  {
-    quote:
-      'Placeholder review. Two or three sentences from a teammate on what it was like to work with Anthony.',
-    name: 'Teammate name',
-    role: 'Role, team or company',
-  },
-  {
-    quote: 'Placeholder review. A shorter one works here. Specific beats glowing.',
-    name: 'Teammate name',
-    role: 'Role, team or company',
-  },
-  {
-    quote:
-      'Placeholder review. Pick quotes that name a real thing he did, not just that he was great.',
-    name: 'Teammate name',
-    role: 'Role, team or company',
-  },
-];
+// About line. Each {n} becomes a project name that pops up its image on hover.
+// Lines are Anthony's own, from the project pages on the current site.
+const aboutLine =
+  'I made {0}, a beach brand about the slow life, and {1}, a hard seltzer that got sucked into a 1940s cartoon. Everything else lives in {2} and {3}.';
+const aboutTargets = projects.map((p) => ({
+  text: p.title,
+  imageUrl: p.image,
+  linkUrl: `/work/${p.slug}`,
+  altText: p.imageAlt,
+}));
+
+// Same order as the current site. The first project leads full-bleed; the rest are cards.
+const [lead, ...rest] = projects;
 ---
 
 <Base>
-  <!-- ---------- Hero ---------- -->
-  <!--
-    Full-bleed frame: the active project fills the whole screen, edge to edge.
-    The bar at the bottom switches projects. Without JS, the first project shows.
-  -->
-  <header
-    class="hero"
-    data-tone={projects[0].tone}
-    data-slugs={JSON.stringify(projects.map((p) => p.slug))}
-    data-tones={JSON.stringify(projects.map((p) => p.tone))}
-  >
-    <div class="slides">
-      {
-        projects.map((p, i) => (
-          <div
-            class:list={['slide', `tone-${p.tone}`]}
-            data-slide={i}
-            data-active={i === 0 ? '' : undefined}
-          >
-            {p.image ? (
-              <img src={p.image} alt={p.imageAlt ?? ''} loading={i === 0 ? 'eager' : 'lazy'} />
-            ) : (
-              <span class="label slide-note">{p.title}: full-bleed image goes here</span>
-            )}
-          </div>
-        ))
-      }
-    </div>
+  <!-- ---------- Hero: same hierarchy as the current site ---------- -->
+  <header class="hero" id="hero">
+    <nav class="topnav" aria-label="Main">
+      <a href="#work">Work</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
 
-    <h1 class="mega" aria-label="Anthony Wekwert">
-      <span aria-hidden="true">Wekwert</span>
+    <!-- The ink name and rotating title are decorative; this is what screen readers get. -->
+    <h1 class="sr-only">
+      Anthony Wekwert. Graphic designer, brand designer, visual storyteller, creative problem-solver.
     </h1>
-
-    <div class="strip">
-      <p class="who">Anthony Wekwert<br />Senior design student, Michigan State</p>
-
-      <div class="intro">
-        <p>Placeholder intro. One sentence on what Anthony makes and who for.</p>
-        <nav aria-label="Main">
-          <a href="#work">Work</a>
-          <a href="#about">About</a>
-          <a href="#contact">Contact</a>
-        </nav>
-      </div>
+    <div class="ink">
+      <IntroType client:load />
+      <p class="pitch">
+        I design brand guidelines, packaging, and visual systems that help ideas stand out.
+      </p>
     </div>
 
-    <!-- Bottom bar: switcher, spec cells, one call to action. Flat, square, no blur. -->
-    <div class="bar">
-      <div class="switch" role="group" aria-label="Featured project">
-        {
-          projects.map((p, i) => (
-            <button type="button" data-pick={i} aria-pressed={i === 0 ? 'true' : 'false'}>
-              <span class:list={['swatch', `tone-${p.tone}`]} aria-hidden="true">
-                {p.image && <img src={p.image} alt="" />}
-              </span>
-              {p.title}
-            </button>
-          ))
-        }
-      </div>
-
-      {
-        projects.map((p, i) => (
-          <dl class="spec" data-spec={i} hidden={i !== 0}>
-            <div>
-              <dt class="label">Discipline</dt>
-              <dd>{p.discipline}</dd>
-            </div>
-            <div class="spec-role">
-              <dt class="label">Role</dt>
-              <dd>{p.role}</dd>
-            </div>
-            <div>
-              <dt class="label">Year</dt>
-              <dd>{p.year}</dd>
-            </div>
-          </dl>
-        ))
-      }
-
-      <a class="go" href={`/work/${projects[0].slug}`} data-go>
-        View project <span aria-hidden="true">→</span>
+    <div class="hero-foot">
+      <p class="hero-name">Michigan State<br /><span>Creative Advertising, May 2027</span></p>
+      <a class="down" href="#work">
+        Selected work
+        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+          <path d="M8 2v11M3 8.5l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" />
+        </svg>
       </a>
     </div>
   </header>
 
-  <script>
-    const hero = document.querySelector<HTMLElement>('.hero');
-    if (hero) {
-      const slides = hero.querySelectorAll<HTMLElement>('[data-slide]');
-      const specs = hero.querySelectorAll<HTMLElement>('[data-spec]');
-      const picks = hero.querySelectorAll<HTMLButtonElement>('[data-pick]');
-      const go = hero.querySelector<HTMLAnchorElement>('[data-go]');
-      const slugs = JSON.parse(hero.dataset.slugs ?? '[]') as string[];
-      const tones = JSON.parse(hero.dataset.tones ?? '[]') as string[];
-
-      picks.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const n = Number(btn.dataset.pick);
-          slides.forEach((s, i) => s.toggleAttribute('data-active', i === n));
-          specs.forEach((s, i) => (s.hidden = i !== n));
-          picks.forEach((b, i) => b.setAttribute('aria-pressed', String(i === n)));
-          hero.dataset.tone = tones[n];
-          if (go) go.href = `/work/${slugs[n]}`;
-        });
-      });
-    }
-  </script>
-
   <main>
-    <!-- ---------- Work: starts inside the first screen ---------- -->
+    <!-- ---------- Work ---------- -->
     <section class="work" id="work" aria-labelledby="work-title">
       <div class="section-head">
         <h2 id="work-title">Selected work</h2>
         <a class="all" href="/work">View all work</a>
       </div>
 
-      <ol class="cards">
+      {
+        lead && (
+          <div class="lead-wrap">
+            <LeadProject
+              client:visible
+              slug={lead.slug}
+              title={lead.title}
+              discipline={lead.discipline}
+              image={lead.image}
+              imageAlt={lead.imageAlt}
+            />
+          </div>
+        )
+      }
+
+      <ol class="cards" start="2">
         {
-          projects.map((p, i) => (
+          rest.map((p, i) => (
             <li class:list={['card', `card-${i + 1}`]}>
               <a href={`/work/${p.slug}`}>
-                {/* Flat fill with the title cropped by the card edge. Real image goes here later. */}
                 <div class:list={['fill', `tone-${p.tone}`]}>
-                  <span class="label fill-no">{pad(i + 1)}</span>
-                  <span class="fill-title" aria-hidden="true">
-                    {p.title}
-                  </span>
+                  <img src={p.image} alt={p.imageAlt} loading="lazy" />
+                  <span class="label fill-no">{pad(i + 2)}</span>
                 </div>
                 <div class="meta">
                   <span class="name">{p.title}</span>
@@ -174,58 +102,56 @@ const reviews = [
       </ol>
     </section>
 
-    <!-- ---------- About ---------- -->
+    <!-- ---------- About: the current site's About page, at the bottom ---------- -->
     <section class="about" id="about" aria-labelledby="about-title">
       <div class="section-head">
         <h2 id="about-title">About</h2>
-        <span class="label">Placeholder copy</span>
+        <span class="label">East Lansing, Michigan</span>
       </div>
 
-      <p class="statement">
-        Placeholder design philosophy. One line on how Anthony thinks about the work.
-      </p>
+      <div class="about-top">
+        <div class="about-copy">
+          <p class="role">Anthony Wekwert, designer / art director</p>
+          <ProjectsLine client:visible content={aboutLine} targets={aboutTargets} />
+        </div>
+        <figure class="portrait">
+          {
+            hasPhoto ? (
+              <img src={site.photo} alt="Anthony Wekwert" width="480" height="600" />
+            ) : (
+              <span class="label">Photo</span>
+            )
+          }
+        </figure>
+      </div>
 
-      <div class="about-grid">
-        <div class="philosophy">
-          <p>
-            Placeholder paragraph. A few short sentences on process: how a project starts,
-            what he looks for, and what he won't do.
-          </p>
-          <p>
-            Placeholder paragraph. Where he's headed next, and the kind of team he wants to
-            join.
-          </p>
+      <!-- Left: "Anthony is". Right: resume sections, dates right-aligned like the resume. -->
+      <div class="about-body">
+        <div class="is">
+          <h3>Anthony is</h3>
+          <ul>{about.is.map((line) => <li>{line}</li>)}</ul>
         </div>
 
-        <dl class="stats">
+        <div class="resume">
           {
-            stats.map((s) => (
-              <div>
-                <dt class="label">{s.label}</dt>
-                <dd>{s.value}</dd>
-              </div>
+            about.sections.map((sec) => (
+              <section class="res">
+                <h3>{sec.heading}</h3>
+                <ul>
+                  {sec.items.map((it) => (
+                    <li>
+                      <div>
+                        <span class="res-name">{it.name}</span>
+                        {it.detail && <span class="res-detail">{it.detail}</span>}
+                      </div>
+                      {it.when && <span class="label res-when">{it.when}</span>}
+                    </li>
+                  ))}
+                </ul>
+              </section>
             ))
           }
-        </dl>
-      </div>
-
-      <div class="reviews">
-        <h3 class="label">From teammates</h3>
-        <ul>
-          {
-            reviews.map((r) => (
-              <li>
-                <blockquote>
-                  <p>{r.quote}</p>
-                </blockquote>
-                <p class="who-said">
-                  <span class="name-sm">{r.name}</span>
-                  <span class="label">{r.role}</span>
-                </p>
-              </li>
-            ))
-          }
-        </ul>
+        </div>
       </div>
     </section>
   </main>
@@ -234,252 +160,133 @@ const reviews = [
 </Base>
 
 <style>
-  /* ---------- Hero: the banner move ---------- */
+  /* ---------- Hero: Stipple Type, full screen ---------- */
 
+  /*
+    Nav band on top, the ink headline filling the middle (left-aligned, so the
+    weight sits left and the right side stays open), name strip at the bottom.
+  */
   .hero {
     position: relative;
+    height: calc(100svh - 3.5rem);
+    min-height: 34rem;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    height: 100svh;
-    min-height: 34rem;
-    color: var(--cream);
-    transition: color 0.3s ease;
-  }
-  /* Type flips to navy when the frame behind it is cream. */
-  .hero[data-tone='cream'] {
-    color: var(--navy);
   }
 
-  /* ---------- Full-bleed frame ---------- */
-
-  .slides {
-    position: absolute;
-    inset: 0;
+  /* Tiers, top to bottom: label, name (biggest), label, title (medium), pitch (smallest). */
+  .ink {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-3);
+    padding: var(--s-5) var(--gutter) var(--s-4);
   }
-
-  .slide {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-  }
-  .slide[data-active] {
-    opacity: 1;
-  }
-
-  .slide img {
-    width: 100%;
-    height: 100%;
-    max-width: none;
-    object-fit: cover;
-  }
-
-  .slide-note {
-    position: absolute;
-    right: var(--gutter);
-    top: 50%;
-    color: inherit;
-    opacity: 0.6;
-  }
-
-  .mega,
-  .strip,
-  .bar {
-    position: relative;
-  }
-
-  /*
-    The surname is set too big for the frame on purpose.
-    Negative top margin pushes the cap height past the top edge,
-    and the word runs past the right edge. No centering.
-  */
-  .mega {
-    font-size: var(--t-mega);
-    font-weight: var(--w-heavy);
-    line-height: 0.7;
-    letter-spacing: -0.045em;
-    white-space: nowrap;
-    margin-top: -0.06em;
-    margin-left: -0.035em;
-  }
-
-  .strip {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: var(--s-4);
-    align-items: end;
-    padding: var(--s-4) var(--gutter) var(--s-3);
-  }
-
-  .who {
-    grid-column: 1 / span 4;
-    font-size: var(--t-xs);
-    line-height: 1.4;
-    opacity: 0.75;
-  }
-
-  .intro {
-    grid-column: 7 / span 4;
-    display: grid;
+  .ink :global(.intro-type) {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
     gap: var(--s-2);
-    font-size: var(--t-sm);
-    line-height: 1.45;
-    max-width: 34ch;
   }
-
-  .intro nav {
-    display: flex;
-    gap: var(--s-4);
-    font-weight: var(--w-heavy);
-  }
-
-  /* ---------- Bottom bar ---------- */
-
-  /*
-    Sits inside the frame, inset by the gutter, so the image still runs
-    to every edge around it. Solid navy, square corners, hairline dividers.
-  */
-  .bar {
-    margin: auto var(--gutter) var(--gutter);
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    background: var(--navy);
-    color: var(--cream);
-    border: 1px solid var(--rule);
-  }
-
-  .switch {
-    display: flex;
-    border-right: 1px solid var(--rule);
-  }
-
-  .switch button {
-    display: flex;
-    align-items: center;
-    gap: var(--s-2);
-    padding: var(--s-3) var(--s-4) var(--s-3) var(--s-3);
-    border: 0;
-    border-right: 1px solid var(--rule);
-    background: transparent;
+  .ink :global(.intro-label) {
+    font-size: var(--t-lg);
+    font-weight: var(--w-light);
     color: var(--ink-soft);
-    font: inherit;
-    font-size: var(--t-sm);
-    font-weight: var(--w-heavy);
-    white-space: nowrap;
-    cursor: pointer;
-  }
-  .switch button:last-child {
-    border-right: 0;
-  }
-  .switch button:hover {
-    color: var(--cream);
-  }
-  .switch button[aria-pressed='true'] {
-    background: var(--cream);
-    color: var(--navy);
-  }
-  .switch button:focus-visible {
-    outline: 2px solid var(--cream);
-    outline-offset: -4px;
-  }
-  .switch button[aria-pressed='true']:focus-visible {
-    outline-color: var(--navy);
-  }
-
-  /* Tiny square of the project: its image, or its tone fill. */
-  .swatch {
-    flex: none;
-    width: 1.75rem;
-    height: 1.75rem;
-    overflow: hidden;
-    outline: 1px solid var(--rule);
-  }
-  .swatch img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .spec {
-    margin: 0;
-    display: grid;
-    grid-template-columns: repeat(3, auto);
-    justify-content: start;
-  }
-  .spec[hidden] {
-    display: none;
-  }
-  .spec div {
-    padding: var(--s-2) var(--s-5) var(--s-2) var(--s-3);
-    border-right: 1px solid var(--rule);
-    display: grid;
-    align-content: center;
-  }
-  .spec dd {
-    margin: 0;
-    font-size: var(--t-sm);
-    font-weight: var(--w-heavy);
     line-height: var(--lh-tight);
   }
+  .ink :global(.intro-ink) {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    margin-left: calc(var(--gutter) * -0.5);
+  }
+  .ink :global(.intro-label + .intro-ink + .intro-label) {
+    margin-top: var(--s-2);
+  }
 
-  /* The one solid call to action. Cream block, navy type. */
-  .go {
-    display: flex;
-    align-items: center;
-    gap: var(--s-2);
-    padding: 0 var(--s-5);
-    background: var(--cream);
-    color: var(--navy);
-    font-size: var(--t-sm);
+  .ink :global(.intro-title) {
+    font-size: clamp(2rem, 1.2rem + 3vw, 4rem);
     font-weight: var(--w-heavy);
-    white-space: nowrap;
-  }
-  .go span {
-    transition: transform 0.2s ease;
-  }
-  .go:hover span {
-    transform: translateX(0.25rem);
-  }
-  .go:focus-visible {
-    outline-offset: -4px;
-    outline-color: var(--navy);
-  }
-
-  .spec dd {
-    white-space: nowrap;
-  }
-  .spec {
-    min-width: 0;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
     overflow: hidden;
   }
+  /* Each new title slides up into place. Same move every time, short and quiet. */
+  .ink :global(.intro-title-word) {
+    display: inline-block;
+    animation: title-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  @keyframes title-in {
+    from {
+      transform: translateY(0.6em);
+      opacity: 0;
+    }
+  }
 
-  /* Laptop and tablet widths: drop the role cell and tighten padding. */
-  @media (max-width: 1100px) {
-    .spec-role {
-      display: none !important;
-    }
-    .switch button {
-      padding-right: var(--s-3);
-    }
-    .spec div {
-      padding-right: var(--s-4);
-    }
-    .go {
-      padding: 0 var(--s-4);
-    }
+  .pitch {
+    font-size: var(--t-sm);
+    color: var(--ink-soft);
+    max-width: 44ch;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .hero,
-    .slide,
-    .go span {
-      transition: none;
+    .ink :global(.intro-title-word) {
+      animation: none;
     }
   }
 
+  /* Solid navy bands top and bottom, like the clear strip on the banner. Flat, no blur. */
+  .topnav {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--s-4);
+    padding: var(--s-3) var(--gutter);
+    background: var(--navy);
+    border-bottom: 1px solid var(--rule);
+    font-size: var(--t-sm);
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+  .topnav a:hover {
+    color: var(--cream);
+    text-decoration-line: underline;
+  }
+
+  /* Banner's bottom strip: name left, the way down on the right, hairline above. */
+  .hero-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: var(--s-4);
+    padding: var(--s-3) var(--gutter) var(--gutter);
+    background: var(--navy);
+    border-top: 1px solid var(--rule);
+  }
+
+  .hero-name {
+    font-size: var(--t-md);
+    font-weight: var(--w-heavy);
+    line-height: var(--lh-tight);
+  }
+  .hero-name span {
+    color: var(--ink-soft);
+    font-weight: var(--w-regular);
+  }
+
+  .down {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    font-size: var(--t-sm);
+    font-weight: var(--w-heavy);
+    white-space: nowrap;
+  }
+
   /* Red as an underline only. Red text on navy is too dark to read. */
-  .intro nav a:hover,
+  .down:hover,
   .all:hover,
   .card a:hover .name {
     text-decoration-line: underline;
@@ -562,28 +369,26 @@ const reviews = [
     color: var(--cream);
   }
 
-  .fill-no {
-    position: absolute;
-    top: var(--s-3);
-    left: var(--s-3);
-    color: inherit;
-    opacity: 0.7;
+  .fill img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .card a:hover .fill img {
+    transform: scale(1.03);
   }
 
-  /* The title runs off the bottom-right of its card. Same crop, smaller frame. */
-  .fill-title {
+  /* Number sits on a small navy block so it reads on any image. */
+  .fill-no {
     position: absolute;
-    left: var(--s-3);
-    bottom: -0.2em;
-    font-size: clamp(4rem, 11vw, 11rem);
-    font-weight: var(--w-heavy);
-    line-height: 0.8;
-    letter-spacing: -0.04em;
-    white-space: nowrap;
+    top: 0;
+    left: 0;
+    padding: var(--s-1) var(--s-2);
+    background: var(--navy);
+    color: var(--cream);
   }
-  .card-2 .fill-title {
-    font-size: clamp(4rem, 9vw, 9rem);
-  }
+
 
   .meta {
     display: grid;
@@ -618,174 +423,147 @@ const reviews = [
     max-width: 34ch;
   }
 
-  /* ---------- About ---------- */
+  /* ---------- About: bottom of the page ---------- */
 
   .about {
-    padding: 0 var(--gutter) var(--s-7);
+    padding: var(--s-5) var(--gutter) var(--s-7);
   }
 
-  /* The one italic moment, borrowed from the moodboard. Same typeface, no second font. */
-  .statement {
-    font-size: var(--t-xl);
-    font-style: italic;
+  /* Line packed on the left, photo small on the right, air between. */
+  .about-top {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--s-4);
+    align-items: end;
+    padding: var(--s-5) 0 var(--s-6);
+  }
+
+  .about-copy {
+    grid-column: 1 / span 8;
+    display: grid;
+    gap: var(--s-4);
+  }
+
+  .role {
+    font-size: var(--t-sm);
+    font-weight: var(--w-heavy);
+    color: var(--ink-soft);
+  }
+
+  .about :global(.projects-line) {
+    font-size: clamp(1.75rem, 1rem + 2.6vw, 3.5rem);
     font-weight: var(--w-light);
-    line-height: 1.02;
-    letter-spacing: -0.02em;
-    max-width: 18ch;
-    margin: var(--s-6) 0 var(--s-7) auto;
-    width: min(100%, 70%);
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    max-width: 30ch;
+    text-wrap: pretty;
   }
 
-  .about-grid {
+  .portrait {
+    grid-column: 10 / -1;
+    margin: 0;
+    aspect-ratio: 4 / 5;
+    background: var(--navy-lift);
+    display: grid;
+    place-items: end start;
+    overflow: hidden;
+  }
+  .portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .portrait .label {
+    padding: var(--s-2);
+  }
+
+  /* "Anthony is" on the left, resume sections packed on the right. */
+  .about-body {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     gap: var(--s-4);
     align-items: start;
-    margin-bottom: var(--s-7);
-  }
-
-  .philosophy {
-    grid-column: 1 / span 5;
-    display: grid;
-    gap: var(--s-3);
-    color: var(--ink-soft);
-    max-width: 46ch;
-  }
-
-  /* Stats packed tight on the right, open space on the left. */
-  .stats {
-    grid-column: 7 / -1;
-    margin: 0;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--s-4);
-  }
-
-  .stats div {
     border-top: 1px solid var(--rule);
-    padding-top: var(--s-2);
-    display: flex;
-    flex-direction: column-reverse;
-    gap: var(--s-1);
+    padding-top: var(--s-4);
   }
 
-  .stats dd {
-    margin: 0;
-    font-size: clamp(3rem, 2rem + 4vw, 6rem);
+  .about-body h3 {
+    font-size: var(--t-md);
     font-weight: var(--w-heavy);
-    line-height: 0.85;
-    letter-spacing: -0.04em;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .reviews h3 {
+    line-height: var(--lh-tight);
     margin-bottom: var(--s-3);
   }
 
-  .reviews ul {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: var(--s-4);
-  }
-
-  .reviews li {
-    border-top: 1px solid var(--rule);
-    padding-top: var(--s-3);
-    display: grid;
-    gap: var(--s-4);
-    align-content: start;
-  }
-
-  /* Uneven widths, the first quote leads. */
-  .reviews li:nth-child(1) {
+  .is {
     grid-column: 1 / span 5;
   }
-  .reviews li:nth-child(2) {
-    grid-column: 6 / span 3;
-  }
-  .reviews li:nth-child(3) {
-    grid-column: 9 / -1;
-  }
-
-  blockquote {
-    margin: 0;
-  }
-
-  /* Red used as a flat mark, where it doesn't have to be read as text. */
-  blockquote p::before {
-    content: '“';
-    display: block;
-    color: var(--accent);
-    font-size: 4rem;
-    font-weight: var(--w-heavy);
-    line-height: 0.6;
-    margin-bottom: var(--s-2);
-  }
-
-  blockquote p {
+  .is li {
     font-size: var(--t-md);
+    font-weight: var(--w-light);
     line-height: 1.35;
   }
-  .reviews li:nth-child(1) blockquote p {
-    font-size: var(--t-lg);
-    line-height: 1.2;
-  }
 
-  .who-said {
+  .resume {
+    grid-column: 7 / -1;
+    display: grid;
+    gap: var(--s-5);
+  }
+  .res h3 {
+    padding-bottom: var(--s-2);
+    border-bottom: 1px solid var(--rule);
+  }
+  .res ul {
+    display: grid;
+    gap: var(--s-3);
+  }
+  /* Like the resume: name bold, detail under it, date right-aligned on the name's baseline. */
+  .res li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--s-4);
+  }
+  .res li > div {
     display: grid;
     gap: 0.1rem;
   }
-
-  .name-sm {
+  .res-name {
     font-size: var(--t-sm);
     font-weight: var(--w-heavy);
+  }
+  .res-detail {
+    font-size: var(--t-sm);
+    color: var(--ink-soft);
+  }
+  .res-when {
+    white-space: nowrap;
+  }
+
+  /* ---------- Lead project ---------- */
+
+  /* Full bleed: cancels the section gutter so the frame runs edge to edge. */
+  .lead-wrap {
+    margin: 0 calc(var(--gutter) * -1) var(--s-6);
   }
 
   /* ---------- Small screens ---------- */
 
   @media (max-width: 760px) {
-    /* On a phone the full word gets too thin. Go bigger and crop harder. */
-    .mega {
-      font-size: 34vw;
+    .hero-foot {
+      flex-direction: column;
+      align-items: start;
     }
 
-    .strip {
-      grid-template-columns: 1fr 1fr;
-      row-gap: var(--s-3);
+    /* Ink box only as tall as two lines, so the headline sits right under its label. */
+    .ink {
+      padding-top: var(--s-6);
     }
-    .who {
-      grid-column: 1;
+    .ink :global(.intro-ink) {
+      flex: 0 0 auto;
+      height: 50vw;
     }
-    .intro {
-      grid-column: 1 / -1;
-      grid-row: 1;
-    }
-    .who {
-      grid-column: 1 / -1;
-    }
-
-    /* Bar stacks: switcher on top, specs and button under it. */
-    .bar {
-      grid-template-columns: 1fr auto;
-    }
-    .switch {
-      grid-column: 1 / -1;
-      border-right: 0;
-      border-bottom: 1px solid var(--rule);
-      overflow-x: auto;
-    }
-    .switch button {
-      flex: 1;
-      padding: var(--s-2) var(--s-3) var(--s-2) var(--s-2);
-    }
-    .spec {
-      grid-template-columns: repeat(2, auto);
-    }
-    .spec-role {
-      display: none !important;
-    }
-    .go {
-      padding: var(--s-3) var(--s-4);
+    .ink :global(.intro-type) {
+      flex: 0 0 auto;
     }
 
     .work {
@@ -806,10 +584,6 @@ const reviews = [
     .card-3 .fill {
       height: 62vw;
     }
-    .fill-title,
-    .card-2 .fill-title {
-      font-size: 22vw;
-    }
 
     .meta {
       grid-template-columns: auto 1fr;
@@ -820,26 +594,31 @@ const reviews = [
       text-align: left;
     }
 
-    .statement {
-      width: 100%;
-      margin: var(--s-5) 0 var(--s-6);
-    }
-
-    .about-grid,
-    .reviews ul {
-      grid-template-columns: 1fr;
-    }
-    .philosophy,
-    .stats,
-    .reviews li:nth-child(n) {
-      grid-column: 1;
-    }
-    .stats {
-      grid-template-columns: repeat(3, 1fr);
+    .about-top {
+      grid-template-columns: 1fr 6.5rem;
       gap: var(--s-3);
     }
-    .stats dd {
-      font-size: 13vw;
+    /* Photo tucks into the top-right corner, the line runs full width under it. */
+    .about-copy {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+    .portrait {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .about-body {
+      grid-template-columns: 1fr;
+      gap: var(--s-5);
+    }
+    .is,
+    .resume {
+      grid-column: 1;
+    }
+    .res li {
+      flex-direction: column;
+      gap: 0.1rem;
     }
   }
 </style>

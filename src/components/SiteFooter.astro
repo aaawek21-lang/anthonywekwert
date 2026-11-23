@@ -1,19 +1,73 @@
 ---
-// Shared footer. The #contact anchor is what every "Contact" link points to.
+// Shared footer. Same links as the current site (Instagram, LinkedIn, email), plus the resume.
+// The #contact anchor is what every "Contact" link points to.
+import { existsSync } from 'node:fs';
+import { site } from '../data/site';
+
+const links = [
+  { label: 'Email', href: `mailto:${site.email}`, show: !!site.email },
+  { label: 'LinkedIn', href: site.linkedin, show: !!site.linkedin },
+  { label: 'Instagram', href: site.instagram, show: !!site.instagram },
+  { label: 'Resume', href: site.resume, show: existsSync(`public${site.resume}`) },
+].filter((l) => l.show);
 ---
 
 <footer class="foot" id="contact">
-  <p class="label">Placeholder contact line</p>
-  <p class="label">© 2026 Anthony Wekwert</p>
+  <div class="reach">
+    <p class="label">Get in touch</p>
+    <a class="mail" href={`mailto:${site.email}`}>{site.email}</a>
+  </div>
+  <ul class="links">
+    {
+      links.map((l) => (
+        <li>
+          <a href={l.href} rel={l.href.startsWith('http') ? 'me noopener' : undefined}>
+            {l.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  <p class="label copy">© 2026 Anthony Wekwert</p>
 </footer>
 
 <style>
   .foot {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr;
     gap: var(--s-4);
     margin: 0 var(--gutter);
     padding: var(--s-5) 0 var(--gutter);
     border-top: 1px solid var(--rule);
+  }
+
+  .reach {
+    display: grid;
+    gap: var(--s-1);
+  }
+
+  .mail {
+    font-size: clamp(1.25rem, 0.8rem + 2vw, 2.25rem);
+    font-weight: var(--w-heavy);
+    line-height: var(--lh-tight);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-4);
+    font-size: var(--t-sm);
+    font-weight: var(--w-heavy);
+  }
+
+  .mail:hover,
+  .links a:hover {
+    text-decoration-line: underline;
+  }
+
+  @media (max-width: 400px) {
+    .mail {
+      overflow-wrap: anywhere;
+    }
   }
 </style>

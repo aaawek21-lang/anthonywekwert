@@ -30,7 +30,7 @@ import { pad } from '../../lib/format';
           <li>
             <a class="row item" href={`/work/${p.slug}`}>
               <span class="label">{pad(i + 1)}</span>
-              <div class="placeholder thumb" />
+              <img class="thumb" src={p.image} alt="" loading="lazy" />
               <div class="title">
                 <span class="name">{p.title}</span>
                 <span class="summary">{p.summary}</span>
@@ -102,7 +102,9 @@ import { pad } from '../../lib/format';
   }
 
   .thumb {
+    width: 100%;
     aspect-ratio: 4 / 3;
+    object-fit: cover;
   }
 
   .title {

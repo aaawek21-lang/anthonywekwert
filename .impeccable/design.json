@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-23T03:47:05.282583+00:00",
+  "generatedAt": "2026-11-23T04:33:30.887016+00:00",
   "title": "Design System: Anthony Wekwert",
   "extensions": {
     "colorMeta": {
@@ -74,10 +74,6 @@
         "displayName": "Headline",
         "purpose": "Big page-level names like the next-project link."
       },
-      "statement": {
-        "displayName": "Statement",
-        "purpose": "The one light italic line in About."
-      },
       "title": {
         "displayName": "Title",
         "purpose": "Section headings and project names in lists."
@@ -97,34 +93,44 @@
       "label": {
         "displayName": "Label",
         "purpose": "Dates, categories, index numbers, spec labels."
+      },
+      "about-line": {
+        "displayName": "About line",
+        "purpose": "The one light sentence on home; project names inside go heavy."
       }
     },
     "shadows": [],
     "motion": [
       {
-        "name": "fade-slide",
-        "value": "opacity 0.4s ease",
-        "purpose": "Hero image crossfade between projects."
-      },
-      {
-        "name": "tone-flip",
-        "value": "color 0.3s ease",
-        "purpose": "Hero type flips navy/cream with the frame."
-      },
-      {
         "name": "nudge",
         "value": "transform 0.2s ease",
         "purpose": "CTA arrow moves 0.25rem right on hover."
+      },
+      {
+        "name": "hover-pop",
+        "value": "opacity + scale 0.2s ease-out, spring follow",
+        "purpose": "About line image preview (React Bits Hover Preview)."
+      },
+      {
+        "name": "slats-reveal",
+        "value": "scroll-linked, 7 strips, stagger 0.5",
+        "purpose": "Lead project reveal (React Bits Scroll Mask)."
+      },
+      {
+        "name": "stipple-in",
+        "value": "grain-by-grain intro 1.3s, once",
+        "purpose": "Home hero name (React Bits Stipple Type, WebGL)."
+      },
+      {
+        "name": "title-in",
+        "value": "translateY 0.6em + fade, 0.45s cubic-bezier(0.2,0.8,0.2,1)",
+        "purpose": "Rotating title under the name."
       }
     ],
     "breakpoints": [
       {
         "name": "phone",
         "value": "760px"
-      },
-      {
-        "name": "laptop",
-        "value": "1100px"
       }
     ]
   },
@@ -136,14 +142,6 @@
       "description": "The one solid block per screen. Cream on navy.",
       "html": "<a class=\"ds-cta\" href=\"#\">View project <span aria-hidden=\"true\">→</span></a>",
       "css": ".ds-cta{display:inline-flex;align-items:center;gap:.5rem;padding:1rem 2.5rem;background:var(--cream,#e4e2dd);color:var(--navy,#071b2b);font-family:'MuseoModerno Variable',system-ui,sans-serif;font-size:.875rem;font-weight:850;text-decoration:none;border-radius:0}.ds-cta span{transition:transform .2s ease}.ds-cta:hover span{transform:translateX(.25rem)}.ds-cta:focus-visible{outline:2px solid var(--navy,#071b2b);outline-offset:-4px}"
-    },
-    {
-      "name": "Project switcher",
-      "kind": "custom",
-      "refersTo": "switch-button",
-      "description": "Hero bar buttons. Selected flips to cream.",
-      "html": "<div class=\"ds-switch\"><button aria-pressed=\"true\"><span class=\"ds-sw ds-red\"></span>Project one</button><button aria-pressed=\"false\"><span class=\"ds-sw ds-cream\"></span>Project two</button></div>",
-      "css": ".ds-switch{display:inline-flex;background:var(--navy,#071b2b);border:1px solid var(--rule,#384752)}.ds-switch button{display:flex;align-items:center;gap:.5rem;padding:1rem 1.5rem 1rem 1rem;border:0;border-right:1px solid var(--rule,#384752);background:transparent;color:var(--ink-soft,#909699);font-family:'MuseoModerno Variable',system-ui,sans-serif;font-size:.875rem;font-weight:850;cursor:pointer}.ds-switch button:last-child{border-right:0}.ds-switch button:hover{color:var(--cream,#e4e2dd)}.ds-switch button[aria-pressed=true]{background:var(--cream,#e4e2dd);color:var(--navy,#071b2b)}.ds-switch button:focus-visible{outline:2px solid currentColor;outline-offset:-4px}.ds-sw{width:1.75rem;height:1.75rem;outline:1px solid var(--rule,#384752)}.ds-red{background:var(--red,#7a1e24)}.ds-cream{background:var(--cream,#e4e2dd)}"
     },
     {
       "name": "Discipline tag",
@@ -175,6 +173,13 @@
       "description": "Heavy small links, red underline on hover and current page.",
       "html": "<nav class=\"ds-nav\"><a href=\"#\">Anthony Wekwert</a><span><a href=\"#\" aria-current=\"page\">Work</a><a href=\"#\">About</a><a href=\"#\">Contact</a></span></nav>",
       "css": ".ds-nav{display:flex;justify-content:space-between;gap:1.5rem;padding:1rem 1.5rem;font-family:'MuseoModerno Variable',system-ui,sans-serif;font-size:.875rem;font-weight:850;background:var(--navy,#071b2b);color:var(--cream,#e4e2dd)}.ds-nav span{display:flex;gap:1.5rem}.ds-nav a{color:inherit;text-decoration:none;text-decoration-color:var(--red,#7a1e24);text-decoration-thickness:.18em;text-underline-offset:.22em}.ds-nav a:hover,.ds-nav a[aria-current=page]{text-decoration-line:underline}.ds-nav a:focus-visible{outline:2px solid var(--cream,#e4e2dd);outline-offset:3px}"
+    },
+    {
+      "name": "Hover link",
+      "kind": "custom",
+      "description": "Project name inside the about line. Heavy, rule underline turning red.",
+      "html": "<p class=\"ds-line\">I've designed <a href=\"#\" class=\"ds-hl\">ULM</a> coffee cups.</p>",
+      "css": ".ds-line{font-family:'MuseoModerno Variable',system-ui,sans-serif;font-size:2rem;font-weight:300;line-height:1.15;color:var(--cream,#e4e2dd);background:var(--navy,#071b2b);padding:1rem}.ds-hl{color:inherit;font-weight:850;text-decoration:underline;text-decoration-color:var(--rule,#384752);text-decoration-thickness:.12em;text-underline-offset:.16em;transition:text-decoration-color .2s ease}.ds-hl:hover,.ds-hl:focus-visible{text-decoration-color:var(--red,#7a1e24)}"
     }
   ],
   "narrative": {
@@ -221,7 +226,7 @@
       },
       {
         "name": "The Flat Rule",
-        "body": "No `box-shadow`, no `backdrop-filter`, no gradients. If something needs to stand out, give it a solid fill.",
+        "body": "No `box-shadow`, no `backdrop-filter`, no gradients. If something needs to stand out, give it a solid fill. The home Stipple Type hero is the only exception.",
         "section": "elevation"
       }
     ],
@@ -231,7 +236,8 @@
       "**Do** use red as a fill, a thick underline, or a single mark.",
       "**Do** place blocks in uneven column spans and let one bleed off an edge.",
       "**Do** flip text to navy when it sits on a cream fill.",
-      "**Do** keep motion small and short (0.2–0.4s fades and nudges) and turn it off for reduced motion."
+      "**Do** keep motion small and short (0.2–0.4s fades and nudges) and turn it off for reduced motion. The lead project's scroll reveal is the one big motion moment on home.",
+      "**Do** restyle every React Bits component to the system before shipping it: square corners, no shadow, palette colors, real links for anything clickable."
     ],
     "donts": [
       "**Don't** use red as text on navy.",
@@ -239,7 +245,9 @@
       "**Don't** use shadows, glows, gradients, blur, glass, or textures.",
       "**Don't** center a layout with even margins on both sides.",
       "**Don't** round corners. Not on buttons, tags, cards, or images.",
-      "**Don't** add icon grids, decorative blobs, or stock imagery to fill space."
+      "**Don't** add icon grids, decorative blobs, or stock imagery to fill space.",
+      "**Don't** use React Bits backgrounds or type effects that glow, blur, or use gradients (Aurora, Aura Blob, Signal Type, Gradient Carousel). They break the Flat Rule. Stipple Type is allowed only as the home hero.",
+      "**Don't** add a second WebGL effect. The Stipple Type hero is the one WebGL moment on the site."
     ]
   }
 }
