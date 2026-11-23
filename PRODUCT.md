@@ -56,7 +56,7 @@ Voice: plain and direct. Short sentences, simple words, no hype or marketing lan
 ## Evidence on Hand
 
 Real:
-- Projects, from the old Cargo site (anthonywekwert.com), in its order: Vita Lenta (spec beach brand concept; the coffee cups marked "VL", earlier noted as "ULM"), Twisted Toonz (spec hard seltzer packaging; Lemon Ace, Royal Peach, Cherry Bomb cans), Design Studies (coursework and side work: Lumina Transit map, ASP phoenix logo, Sanuk, rush and event flyers), Photography (freelance, Canon Rebel T7; leads with the Jeep, duplicate sunset cut). Titles, one-liners, context, and tools are his own words from those pages. Images in `public/work/<slug>/`, pulled from the Cargo site and resized.
+- Projects, from the old Cargo site (anthonywekwert.com), in its order: Vita Lenta (spec beach brand concept; the coffee cups marked "VL", earlier noted as "ULM"), Twisted Toonz (spec hard seltzer packaging; Lemon Ace, Royal Peach, Cherry Bomb cans), Design Studies (coursework and side work: Lumina Transit map, ASP phoenix logo, Sanuk, rush and event flyers), Photography (freelance, Canon Rebel T7; leads with the Jeep, duplicate sunset cut). Titles, one-liners, context, and tools are his own words from those pages. Images in `src/assets/work/<slug>/`, pulled from the Cargo site. Astro builds AVIF/WebP at several widths from them; add new project images there (not in `public/`) and reference them as `/work/<slug>/<file>` in `src/data/projects.ts`.
 - About content from the old About page plus the resume, in `src/data/site.ts`.
 - Contact: email anthonywekwertcreative@gmail.com, LinkedIn /in/anthonywekwert, Instagram @_antwek, resume at `public/resume.pdf`.
 - Silver and Bronze Addy (AAF, Feb 2026). Eagle Scout (Sept 2023). Dean's List Fall 2024 – Fall 2025.

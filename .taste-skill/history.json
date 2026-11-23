@@ -1,0 +1,32 @@
+{
+ "palettes": [],
+ "types": [],
+ "dealt": [
+  "host",
+  "red-hat",
+  "newsreader"
+ ],
+ "moments": [
+  {
+   "id": "pinned-chapters",
+   "at": "2026-11-23T17:45:46.733Z",
+   "seed": "c177008e"
+  }
+ ],
+ "photos": [
+  {
+   "trade": "studio",
+   "lead": null,
+   "ids": [
+    "d88"
+   ],
+   "sections": [
+    "about",
+    "hands",
+    "paper"
+   ],
+   "seed": "ik92wq",
+   "at": "2026-11-23T17:48:11.018Z"
+  }
+ ]
+}

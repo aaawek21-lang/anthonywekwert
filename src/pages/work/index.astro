@@ -1,178 +1,80 @@
 ---
-import Base from '../../layouts/Base.astro';
-import SiteNav from '../../components/SiteNav.astro';
-import SiteFooter from '../../components/SiteFooter.astro';
+// The work list in the tasteskill system (Kit layout): the React Bits portfolio template's two-column
+// grid of project cards, each linked to its page (the card lifts 2px and its picture zooms 1.03 on hover).
+import Kit from '../../layouts/Kit.astro';
 import { projects } from '../../data/projects';
-import { pad } from '../../lib/format';
+import { workImage } from '../../lib/images';
+import { pic } from '../../lib/pic';
+
+const cards = await Promise.all(
+  projects.map(async (p) => ({ p, img: p.image ? await pic(workImage(p.image), [480, 800, 1200]) : null })),
+);
 ---
 
-<Base title="Work">
-  <SiteNav current="work" />
+<Kit title="Work: Anthony Wekwert, designer and art director" description="Vita Lenta, Twisted Toonz, Lumina and a year of design studies and photographs by Anthony Wekwert, Michigan State.">
+  <style is:inline slot="head">
+    /* page CSS: a card without a cover yet shows its title on the panel, the same size as a photograph */
+    .tile__media .no-cover { position: absolute; inset: 0; display: flex; align-items: flex-end; }
+    .tile__media .no-cover span { font: var(--display-weight) clamp(48px, 6vw, 88px)/.86 var(--font-display); letter-spacing: -0.04em; margin: 0 0 -0.1em var(--s-5); white-space: nowrap; }
+    /* the tablet: square pictures, so each screen of two cards is filled */
+    @media (min-width: 640px) and (max-width: 1023px) { .tile--wide { --tile-ratio: 1; } }
+    @media (min-width: 640px) and (max-width: 1023px) and (min-height: 1100px) { .tile--wide { --tile-ratio: 4 / 5; } }
+    /* a phone: two cards and the heading on the first screen; each project's line is the first thing on its own page */
+    @media (max-width: 639px) { .tile--wide > p { display: none; } }
+  </style>
 
-  <header class="head">
-    <!-- Same move as the home page: too big for the frame, pushed off the right edge. -->
-    <h1 class="mega">Work</h1>
-    <p class="label count">{pad(projects.length)} projects</p>
-  </header>
-
-  <main class="sheet">
-    <div class="row cols" aria-hidden="true">
-      <span class="label">No.</span>
-      <span></span>
-      <span class="label">Project</span>
-      <span class="label">Discipline</span>
-      <span class="label year">Year</span>
+  <section class="hero" data-enter aria-labelledby="work-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h1 id="work-h">Work</h1>
+        <p>Three spec projects and a year of design studies and photographs.</p>
+      </div>
+      <div class="grid">
+        {cards.slice(0, 2).map(({ p, img }) => (
+          <a class="tile tile--wide span-6" href={`/work/${p.slug}`}>
+            <div class="tile__media">
+              {img ? (
+                <img src={img.src} srcset={img.srcset} sizes="(max-width: 639px) 100vw, 45vw" width={img.width} height={img.height} alt={p.imageAlt} fetchpriority="high" data-source="client" data-subject={`${p.title} project`} />
+              ) : (
+                <div class="no-cover" aria-hidden="true"><span>{p.title}</span></div>
+              )}
+            </div>
+            <div class="tile__head"><h2 class="t-card">{p.title}</h2><span class="tile__price muted">{p.discipline}</span></div>
+            <p>{p.summary}</p>
+          </a>
+        ))}
+      </div>
     </div>
+  </section>
 
-    <ol>
-      {
-        projects.map((p, i) => (
-          <li>
-            <a class="row item" href={`/work/${p.slug}`}>
-              <span class="label">{pad(i + 1)}</span>
-              <img class="thumb" src={p.image} alt="" loading="lazy" />
-              <div class="title">
-                <span class="name">{p.title}</span>
-                <span class="summary">{p.summary}</span>
-              </div>
-              <span class="label disc">{p.discipline}</span>
-              <span class="label year">{p.year}</span>
-            </a>
-          </li>
-        ))
-      }
-    </ol>
-  </main>
+  <section class="section" id="more-work" aria-labelledby="more-h">
+    <div class="wrap">
+      <div class="section-head"><h2 id="more-h">A map and the studies</h2></div>
+      <div class="grid">
+        {cards.slice(2).map(({ p, img }) => (
+          <a class="tile tile--wide span-6" href={`/work/${p.slug}`}>
+            <div class="tile__media">
+              {img ? (
+                <img src={img.src} srcset={img.srcset} sizes="(max-width: 639px) 100vw, 45vw" width={img.width} height={img.height} alt={p.imageAlt} loading="lazy" decoding="async" data-source="client" data-subject={`${p.title} project`} />
+              ) : (
+                <div class="no-cover" aria-hidden="true"><span>{p.title}</span></div>
+              )}
+            </div>
+            <div class="tile__head"><h3 class="t-card">{p.title}</h3><span class="tile__price muted">{p.discipline}</span></div>
+            <p>{p.summary}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
 
-  <SiteFooter />
-</Base>
-
-<style>
-  .head {
-    position: relative;
-    overflow: hidden;
-    padding-top: var(--s-6);
-  }
-
-  /*
-    Right-aligned and pushed past the right edge so the "k" is cut.
-    The page weight sits on the right, the list hangs below it.
-  */
-  .mega {
-    font-size: 31vw;
-    font-weight: var(--w-heavy);
-    line-height: 0.72;
-    letter-spacing: -0.045em;
-    white-space: nowrap;
-    text-align: right;
-    margin-right: -0.14em;
-  }
-
-  .count {
-    position: absolute;
-    left: var(--gutter);
-    bottom: 0;
-  }
-
-  .sheet {
-    padding: var(--s-6) var(--gutter) var(--s-7);
-  }
-
-  /* Spec-sheet row: number, thumbnail, title, discipline, year. */
-  .row {
-    display: grid;
-    grid-template-columns: 3rem minmax(8rem, 14rem) 1fr 10rem 4rem;
-    gap: var(--s-4);
-    align-items: start;
-  }
-
-  .cols {
-    padding-bottom: var(--s-2);
-    border-bottom: 1px solid var(--rule);
-  }
-
-  .item {
-    padding: var(--s-4) 0;
-    border-bottom: 1px solid var(--rule);
-  }
-
-  .item > .label {
-    /* Line labels up with the project name's first line. */
-    padding-top: 0.35rem;
-  }
-
-  .thumb {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-  }
-
-  .title {
-    display: grid;
-    gap: var(--s-1);
-  }
-
-  .name {
-    font-size: var(--t-lg);
-    font-weight: var(--w-heavy);
-    line-height: var(--lh-tight);
-  }
-
-  .summary {
-    font-size: var(--t-sm);
-    color: var(--ink-soft);
-    max-width: 40ch;
-  }
-
-  .year {
-    text-align: right;
-  }
-
-  .item:hover .name {
-    text-decoration-line: underline;
-    text-decoration-color: var(--accent);
-    text-decoration-thickness: 0.12em;
-    text-underline-offset: 0.15em;
-  }
-
-  @media (max-width: 760px) {
-    .mega {
-      font-size: 42vw;
-    }
-
-    .count {
-      position: static;
-      padding: var(--s-3) var(--gutter) 0;
-    }
-
-    .sheet {
-      padding-top: var(--s-5);
-    }
-
-    .cols {
-      display: none;
-    }
-
-    /* Thumbnail on top, then number + name, discipline and year on one line. */
-    .row {
-      grid-template-columns: 2rem 1fr auto;
-      row-gap: var(--s-2);
-    }
-    .thumb {
-      grid-column: 1 / -1;
-      grid-row: 1;
-    }
-    .title {
-      grid-column: 2 / -1;
-    }
-    .disc {
-      grid-column: 2;
-    }
-    .year {
-      grid-column: 3;
-    }
-    .item > .label {
-      padding-top: 0;
-    }
-  }
-</style>
+  <Fragment slot="close">
+    <div class="closing__cta close--type">
+      <div class="section-head">
+        <h2 id="close-h">Full-time roles from May 2027</h2>
+        <p>Looking for a design or art direction job after graduation.</p>
+      </div>
+      <a class="btn btn--primary btn--xl" href="/about">Read about me<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
+    </div>
+  </Fragment>
+</Kit>

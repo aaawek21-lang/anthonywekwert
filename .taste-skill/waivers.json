@@ -1,0 +1,7 @@
+[
+  {
+    "check": "scroll-reveal",
+    "target": "div.closing__cta.close--photo > div.section-head--split > a.btn.btn--primary",
+    "reason": "Nothing is revealed: the close button is opacity 1, untransformed and the same colour before it enters the view (checked in a browser at 390). The observer that fires is the kit's own action-bar twin watcher in system.js, which only decides whether to hide the phone bar; the 0.12 s colour transition it catches is the motion layer's hover colour on the button."
+  }
+]

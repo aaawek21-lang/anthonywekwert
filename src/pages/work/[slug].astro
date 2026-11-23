@@ -1,289 +1,115 @@
 ---
-/*
-  Project page template. One page per entry in src/data/projects.ts.
-  Layout borrows the resume: the title runs up the left edge as a spine,
-  content sits in a column against it.
-*/
-import Base from '../../layouts/Base.astro';
-import SiteNav from '../../components/SiteNav.astro';
-import SiteFooter from '../../components/SiteFooter.astro';
-import { projects, type Project } from '../../data/projects';
-import { pad } from '../../lib/format';
+// A project page in the tasteskill system (Kit layout): the split hero (the project, its line, the facts,
+// the cover), then its images in the React Bits portfolio template's even two-column grid, four to a
+// section so each section stays two screens. Images sit whole on a panel (posters and logos are never cropped).
+import Kit from '../../layouts/Kit.astro';
+import { projects, type Project, type Shot } from '../../data/projects';
+import { workImage } from '../../lib/images';
+import { pic } from '../../lib/pic';
 
 export function getStaticPaths() {
-  return projects.map((project, i) => ({
-    params: { slug: project.slug },
-    props: { project, index: i },
-  }));
+  return projects.map((project, i) => ({ params: { slug: project.slug }, props: { project, index: i } }));
 }
 
 interface Props {
   project: Project;
   index: number;
 }
-
 const { project, index } = Astro.props;
 const next = projects[(index + 1) % projects.length]!;
 
-// Empty values (like a year that isn't known yet) are left out, not shown as blanks.
-const specs = [
-  ['Project', project.kind],
+// Section headings for each group of four images.
+const TITLES: Record<string, string[]> = {
+  'vita-lenta': ['Brand slides'],
+  'twisted-toonz': ['Cans and labels'],
+  'design-studies': ['Logos, posters and flyers', 'Photographs', 'A study and more photographs'],
+};
+const groups: { title: string; ratio: string; shots: (Shot & { img: Awaited<ReturnType<typeof pic>> })[] }[] = [];
+for (let g = 0; g * 4 < project.gallery.length; g++) {
+  const shots = await Promise.all(
+    project.gallery.slice(g * 4, g * 4 + 4).map(async (s) => ({ ...s, img: await pic(workImage(s.src), [480, 800, 1200]) })),
+  );
+  // panels follow the group's pictures: 4:3 for mostly wide ones (slides, cans), square for tall ones (posters, photos)
+  const wide = shots.reduce((n, s) => n + (s.img.width / s.img.height > 1.2 ? 1 : 0), 0) > shots.length / 2;
+  groups.push({ title: (TITLES[project.slug] || [])[g] || 'More images', shots, ratio: wide ? '4 / 3' : '1' });
+}
+
+const cover = project.image ? await pic(workImage(project.image), [640, 960, 1280, 1600, 1800]) : null;
+const facts = [
   ['Made at', project.context],
   ['Tools', project.tools],
   ['Year', project.year],
-].filter(([, value]) => value);
-
-// Gallery cycles through three placements so the page keeps an uneven rhythm.
-const slots = ['img-a', 'img-b', 'img-c'];
+].filter(([, v]) => v);
 ---
 
-<Base title={project.title} description={project.summary}>
-  <div class="page">
-    <aside class="spine">
-      <h1>{project.title}</h1>
-    </aside>
+<Kit title={`${project.title}: ${project.kind.toLowerCase()} by Anthony Wekwert`} description={`${project.title}, ${project.kind.toLowerCase()}. ${project.summary}`}>
+  <style is:inline slot="head">
+    /* page CSS: the image grid (two columns, every image whole on its panel) and the cover-less hero block */
+    .shots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-5); }
+    /* the panel keeps its square; the image is pinned inside it, whole (a tall poster never stretches the panel) */
+    .shot { position: relative; margin: 0; aspect-ratio: var(--shot-r, 1); min-height: 0; border-radius: var(--r-lg); background: var(--surface); overflow: clip; }
+    .shot > img { position: absolute; inset: var(--s-5); width: calc(100% - 2 * var(--s-5)); height: calc(100% - 2 * var(--s-5)); object-fit: contain; }
+    .no-cover { width: 100%; height: 100%; min-width: 0; display: flex; align-items: flex-end; border-radius: var(--r-lg); background: var(--surface); overflow: clip; }
+    .no-cover span { font: var(--display-weight) clamp(44px, 7vw, 112px)/.9 var(--font-display); letter-spacing: -0.04em; margin: 0 var(--s-5) var(--s-5); overflow-wrap: anywhere; }
+    /* the tablet holds a group of four on one screen */
+    .shots-section { --h: 2; }
+    .shots[data-shape="wide"] { --shot-r: 4 / 3; }
+    @media (min-width: 1024px) and (max-width: 1279px) { .shots[data-shape="wide"] { --shot-r: 1; } }
+    @media (min-width: 640px) and (max-width: 1023px) { .shots-section { --h: 1; } }
+    .hero-facts-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4); margin: 0; }
+    .hero-facts-list dt { color: var(--muted); font-size: var(--t-small); }
+    .hero-facts-list dd { margin: 0; }
+    @media (max-width: 639px) { .shots { grid-template-columns: 1fr; gap: var(--s-4); } .shot { aspect-ratio: 4 / 3; } .shot > img { inset: var(--s-4); width: calc(100% - 2 * var(--s-4)); height: calc(100% - 2 * var(--s-4)); } }
+  </style>
 
-    <div class="body">
-      <SiteNav current="work" />
-
-      <main class="content">
-        <section class="intro">
-          <p class="label">{pad(index + 1)} / {pad(projects.length)}</p>
-          <p class="summary">{project.summary}</p>
-
-          <dl class="specs">
-            {
-              specs.map(([term, value]) => (
-                <div>
-                  <dt class="label">{term}</dt>
-                  <dd>{value}</dd>
-                </div>
-              ))
-            }
+  <section class="hero hero--split" data-enter aria-labelledby="hero-h">
+    <div class="wrap"><div class="hero-text grid hero__grid">
+      <div class="hero__text span-5">
+        <p class="hero__kicker"><span class="dot" aria-hidden="true"></span>{project.kind}</p>
+        <h1 id="hero-h">{project.title}</h1>
+        <p class="hero__lead">{project.summary}</p>
+        {facts.length > 0 && (
+          <dl class="hero-facts-list">
+            {facts.map(([k, v]) => (<div><dt>{k}</dt><dd>{v}</dd></div>))}
           </dl>
-        </section>
+        )}
+        <div class="btn-row">
+          {groups.length > 0 && <a class="btn btn--secondary" href="#images">See the images</a>}
+          <a class="link" href={`/work/${next.slug}`}>Next: {next.title}</a>
+        </div>
+      </div>
+      <div class="hero__media span-6 start-7">
+        {cover ? (
+          <img src={cover.src} srcset={cover.srcset} sizes="(max-width: 1023px) 100vw, 66vw" width={cover.width} height={cover.height} alt={project.imageAlt} fetchpriority="high" data-source="client" data-subject={`${project.title} project`} />
+        ) : (
+          <div class="no-cover" aria-hidden="true"><span>{project.title}</span></div>
+        )}
+      </div>
+    </div></div>
+  </section>
 
-        <!-- Cover bleeds off the right edge, then the gallery in mixed widths. -->
-        <section class="images">
-          <figure class="img-lead">
-            <img src={project.image} alt={project.imageAlt} />
-          </figure>
+  {groups.map((g, gi) => (
+    <section class="section shots-section" id={gi === 0 ? 'images' : `images-${gi + 1}`} aria-labelledby={`images-h-${gi}`}>
+      <div class="wrap">
+        <div class="section-head"><h2 id={`images-h-${gi}`}>{g.title}</h2></div>
+        <div class="shots" data-shape={g.ratio === '1' ? 'tall' : 'wide'}>
+          {g.shots.map((s) => (
+            <figure class="shot">
+              <img src={s.img.src} srcset={s.img.srcset} sizes="(max-width: 639px) 90vw, 45vw" width={s.img.width} height={s.img.height} alt={s.alt} loading="lazy" decoding="async" data-source="client" data-subject={`${project.title} image`} />
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  ))}
 
-          {
-            project.gallery.map((shot, i) => (
-              <figure class={slots[i % slots.length]}>
-                <img src={shot.src} alt={shot.alt} loading="lazy" />
-              </figure>
-            ))
-          }
-        </section>
-
-        <a class="next" href={`/work/${next.slug}`}>
-          <span class="label">Next project</span>
-          <span class="next-name">{next.title}</span>
-        </a>
-      </main>
-
-      <SiteFooter />
+  <Fragment slot="close">
+    <div class="closing__cta close--type">
+      <div class="section-head">
+        <h2 id="close-h">Next project: {next.title}</h2>
+        <p>{next.summary}</p>
+      </div>
+      <a class="btn btn--primary btn--xl" href={`/work/${next.slug}`}>See {next.title}<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
     </div>
-  </div>
-</Base>
-
-<style>
-  .page {
-    display: grid;
-    grid-template-columns: var(--spine) 1fr;
-    --spine: clamp(6rem, 15vw, 13rem);
-  }
-
-  /*
-    The spine. Title rotated to read bottom-to-top, pinned while the
-    content scrolls. Set larger than the column so the left edge
-    of the screen cuts the tops of the letters, like the home page crop.
-  */
-  .spine {
-    position: sticky;
-    top: 0;
-    height: 100svh;
-    overflow: hidden;
-  }
-
-  .spine h1 {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    white-space: nowrap;
-    font-size: calc(var(--spine) * 1.45);
-    font-weight: var(--w-heavy);
-    line-height: 0.72;
-    letter-spacing: -0.04em;
-    /*
-      After rotation the letter tops face left. Pushing past left: 0
-      lets the screen edge cut them, same as the home page crop.
-    */
-    position: absolute;
-    bottom: var(--gutter);
-    left: -0.09em;
-  }
-
-  .body {
-    min-width: 0;
-  }
-
-  .content {
-    padding: var(--s-6) var(--gutter) var(--s-7) var(--s-5);
-  }
-
-  /* ---------- Intro + spec sheet ---------- */
-
-  .intro {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: var(--s-4);
-    align-items: start;
-    margin-bottom: var(--s-7);
-  }
-
-  .intro > .label {
-    grid-column: 1 / span 2;
-    padding-top: 0.4rem;
-  }
-
-  .summary {
-    grid-column: 3 / span 6;
-    font-size: var(--t-lg);
-    font-weight: var(--w-regular);
-    line-height: 1.25;
-  }
-
-  /* Like the resume's right-aligned date column. */
-  .specs {
-    grid-column: 10 / -1;
-    margin: 0;
-    display: grid;
-    gap: var(--s-3);
-  }
-
-  .specs div {
-    display: grid;
-    gap: 0.1rem;
-    border-top: 1px solid var(--rule);
-    padding-top: var(--s-2);
-  }
-
-  .specs dd {
-    margin: 0;
-    font-size: var(--t-sm);
-    font-weight: var(--w-heavy);
-  }
-
-  /* ---------- Images ---------- */
-
-  .images {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    column-gap: var(--s-4);
-    row-gap: var(--s-6);
-    align-items: end;
-  }
-
-  .images figure {
-    margin: 0;
-  }
-  .images img {
-    width: 100%;
-    height: auto;
-  }
-
-  .img-lead {
-    grid-column: 1 / -1;
-    margin-right: calc(var(--gutter) * -1);
-  }
-
-  .img-a {
-    grid-column: 1 / span 5;
-  }
-
-  .img-b {
-    grid-column: 7 / span 4;
-  }
-
-
-
-  .img-c {
-    grid-column: 5 / -1;
-  }
-
-  /* ---------- Next ---------- */
-
-  .next {
-    display: grid;
-    gap: var(--s-2);
-    margin-top: var(--s-7);
-    padding-top: var(--s-3);
-    border-top: 1px solid var(--rule);
-  }
-
-  .next-name {
-    text-decoration-color: var(--accent);
-    text-decoration-thickness: 0.08em;
-    text-underline-offset: 0.12em;
-    font-size: var(--t-xl);
-    font-weight: var(--w-heavy);
-    line-height: 0.95;
-    letter-spacing: -0.02em;
-  }
-
-  .next:hover .next-name {
-    text-decoration-line: underline;
-  }
-
-  /* ---------- Small screens: spine turns into a cropped header ---------- */
-
-  @media (max-width: 760px) {
-    .page {
-      grid-template-columns: 1fr;
-    }
-
-    .spine {
-      position: static;
-      height: auto;
-      grid-row: 2;
-    }
-
-    .spine h1 {
-      position: static;
-      writing-mode: horizontal-tb;
-      transform: none;
-      font-size: 24vw;
-      margin-left: -0.03em;
-    }
-
-    .body {
-      display: contents;
-    }
-
-    .content {
-      grid-row: 3;
-      padding: var(--s-5) var(--gutter) var(--s-6);
-    }
-
-    .intro,
-    .images {
-      grid-template-columns: 1fr;
-    }
-    .intro > .label,
-    .summary,
-    .specs,
-    .img-a,
-    .img-b,
-    .img-c {
-      grid-column: 1;
-    }
-    .intro {
-      margin-bottom: var(--s-6);
-    }
-    .images {
-      row-gap: var(--s-5);
-    }
-  }
-</style>
+  </Fragment>
+</Kit>

@@ -1,1 +1,15 @@
-{ "buildPath": "code" }
+{
+  "buildPath": "code",
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-font",
+        "value": "host grotesk",
+        "createdAt": "2026-11-23T17:57:43.623Z",
+        "reason": "user confirmed: Anthony chose 'Let the skill deal it' for fonts on the tasteskill redesign; tasteskill dealt Host Grotesk"
+      }
+    ]
+  }
+}

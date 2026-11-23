@@ -1,0 +1,27 @@
+---
+// Photograph credits: the one stock photograph on the site. Everything else is Anthony's own work.
+import Kit from '../layouts/Kit.astro';
+---
+
+<Kit title="Photograph credits: Anthony Wekwert" description="Where the one stock photograph on anthonywekwert.com comes from.">
+  <section class="section" aria-labelledby="credits-h" data-enter>
+    <div class="wrap">
+      <div class="section-head">
+        <h1 id="credits-h">Photograph credits</h1>
+        <p>Every project image on this site is Anthony Wekwert's own work. One photograph is not:</p>
+      </div>
+      <ul class="rows">
+        <li>
+          <span class="rows__name">White wall with a red stripe, About section<small>Photo by ran liwen on Unsplash, Unsplash License</small></span>
+          <a class="rows__value link" href="https://unsplash.com/photos/white-building-with-red-stripe-against-blue-sky-Q8FHf0KglsQ">See it on Unsplash</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+  <Fragment slot="close">
+    <div class="closing__cta close--type">
+      <div class="section-head"><h2 id="close-h">Back to the work</h2></div>
+      <a class="btn btn--primary btn--xl" href="/#work">See the work</a>
+    </div>
+  </Fragment>
+</Kit>

@@ -1,0 +1,79 @@
+---
+// About page, in the same tasteskill system as the home page. Content: the old Cargo About page plus the resume.
+import { getImage } from 'astro:assets';
+import Kit from '../layouts/Kit.astro';
+import { about, site } from '../data/site';
+import { workImage } from '../lib/images';
+
+const vl = workImage('/work/vita-lenta/slide-15.jpg');
+const sizes = [640, 960, 1280, 1800].filter((w) => w <= vl.width);
+const out = await Promise.all(sizes.map((w) => getImage({ src: vl, width: w, format: 'webp', quality: 80 })));
+const photo = { src: out[out.length - 1].src, srcset: out.map((o, i) => `${o.src} ${sizes[i]}w`).join(', ') };
+---
+
+<Kit
+  title="About Anthony Wekwert: designer and art director, Michigan State"
+  description="Anthony Wekwert studies Creative Advertising at Michigan State, runs brand and social for Alpha Sigma Phi and won Silver and Bronze Addy Awards in 2026."
+>
+  <section class="hero hero--split" data-enter aria-labelledby="hero-h">
+    <div class="wrap"><div class="hero-text grid hero__grid">
+      <div class="hero__text span-5">
+        <h1 id="hero-h">About Anthony Wekwert</h1>
+        <p class="hero__lead">Creative Advertising student at Michigan State, graduating May 2027. I design brands, packaging and visual systems, and I'm looking for a full-time role after graduation.</p>
+        <ul class="rows about-is" aria-label="Anthony is">
+          {about.is.map((line) => <li><span class="rows__name">{line}</span></li>)}
+        </ul>
+        <div class="btn-row">
+          <a class="btn btn--secondary" href={site.resume}>Get the resume</a>
+        </div>
+      </div>
+      <div class="hero__media span-6 start-7">
+        <img src={photo.src} srcset={photo.srcset} sizes="(max-width: 639px) 100vw, 44vw" width={vl.width} height={vl.height} alt="Vita Lenta brand slide" fetchpriority="high" data-source="client" data-subject="Vita Lenta brand">
+      </div>
+    </div></div>
+  </section>
+
+  <section class="section" id="resume" aria-labelledby="resume-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="resume-h">Education, work and the rest</h2>
+      </div>
+      <div class="grid grid--top">
+        {about.sections.map((sec) => (
+          <div class="span-6 about-block">
+            <h3>{sec.heading}</h3>
+            <ul class="rows">
+              {sec.items.map((it) => (
+                <li>
+                  <span class="rows__name">{it.name}{it.detail && <small>{it.detail}</small>}</span>
+                  {it.when && <span class="rows__value">{it.when}</span>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <Fragment slot="close">
+    <div class="closing__cta close--type">
+      <div class="section-head">
+        <h2 id="close-h">See the three projects</h2>
+        <p>Vita Lenta, Twisted Toonz and Lumina, plus a year of design studies.</p>
+      </div>
+      <a class="btn btn--primary btn--xl" href="/#work">See the work<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
+    </div>
+  </Fragment>
+</Kit>
+
+<style>
+  /* page CSS: the "Anthony is" rows under the lead, and the resume blocks' heads */
+  .about-is {
+    margin-block: var(--s-6) var(--s-6);
+  }
+  .about-block h3 {
+    font: 500 var(--t-card) / 1.3 var(--font-text);
+    margin-bottom: var(--s-4);
+  }
+</style>

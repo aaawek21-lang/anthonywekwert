@@ -1,0 +1,142 @@
+---
+// Shared shell for pages built with tasteskill (home, about, credits): the head, the fixed nav and the
+// closing footer. The kit (public/assets) loads as plain files; page content goes in the default slot,
+// the close (row 1 of footer.closing) in the "close" slot.
+import { projects } from '../data/projects';
+import { site } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  ogDescription?: string;
+  // Prefix for in-page anchors: '' on the home page, '/' elsewhere so #work becomes /#work.
+  home?: boolean;
+  moments?: string[];
+}
+
+const { title, description, ogDescription = description, home = false, moments = [] } = Astro.props;
+const to = (id: string) => (home ? `#${id}` : `/#${id}`);
+---
+
+<!doctype html>
+<html lang="en" data-type="service" data-radius="soft" data-buttons="arrow" data-motion>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{title}</title>
+<meta name="description" content={description}>
+<meta property="og:type" content="website">
+<meta property="og:title" content={title}>
+<meta property="og:description" content={ogDescription}>
+<meta property="og:image" content="/share.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#071b2b">
+<!-- <link rel="canonical" href="https://anthonywekwert.com/"> once the domain points here -->
+<meta name="site-kind" content="other">
+<meta name="page-type" content="service">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/system.css">
+<link rel="stylesheet" href="/assets/ui/cards.css">
+<link rel="stylesheet" href="/assets/motion/motion.css">
+<link rel="stylesheet" href="/assets/layout/layout.css">
+<style is:inline>
+:root {
+  --p-bg: #071b2b; --p-surface: #112333; --p-ink: #e4e2dd; --p-muted: #888f95;
+  --p-accent: #c3303a; --p-accent-ink: #ffffff; --p-action: #c3303a; --p-action-ink: #ffffff;
+  --p-inv-bg: #e4e2dd; --p-inv-surface: #d2d2cf; --p-inv-ink: #071b2b; --p-inv-muted: #4d5965;
+  --p-inv-accent: #c3303a; --p-inv-accent-ink: #ffffff; --p-inv-action: #c3303a; --p-inv-action-ink: #ffffff;
+  --font-display: "Host Grotesk", system-ui, sans-serif;
+  --font-text: "Host Grotesk", system-ui, sans-serif;
+  --display-weight: 400;
+  --display-tracking: -0.035em;
+  --display-tracking-xl: -0.04em;
+}
+</style>
+<style is:inline>
+/* page CSS: a row's detail line under its name (as the skill's service page model has it) */
+.rows .rows__name small { display: block; font-weight: 400; color: var(--muted); font-size: var(--t-small); }
+/* the footer's logo: the mark above the name, so the name starts on the left line */
+.closing__links .nav__logo { flex-direction: column; align-items: flex-start; gap: var(--s-2); }
+</style>
+<slot name="head" />
+<script is:inline>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
+{moments.length > 0 && (
+  <Fragment>
+    <script is:inline>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
+    <link rel="modulepreload" href="/assets/moments/moments.js">
+    <link rel="modulepreload" href="/assets/moments/lib.js">
+    {moments.map((id) => <link rel="modulepreload" href={`/assets/moments/${id}/moment.js`} />)}
+  </Fragment>
+)}
+</head>
+<body>
+<slot name="deal" />
+
+<header class="nav nav--centre">
+  <div class="wrap nav__bar">
+    <a class="skip-link" href="#top">Skip to content</a>
+    <a class="nav__logo" href={home ? '#top' : '/'}><span class="mark mark--initial" aria-hidden="true">A</span>Anthony Wekwert</a>
+    <nav class="nav__links" aria-label="Main">
+      <div class="nav__item"><a class="nav__link" href={to('work')}>Work</a></div>
+      <div class="nav__item"><a class="nav__link" href={to('studies')}>Studies</a></div>
+      <div class="nav__item"><a class="nav__link" href="/about" aria-current={Astro.url.pathname.startsWith('/about') ? 'page' : undefined}>About</a></div>
+      <div class="nav__item"><a class="nav__link" href={site.resume}>Resume</a></div>
+    </nav>
+    <div class="nav__actions">
+      <a class="btn btn--primary" href={to('work')}>See the work<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
+    </div>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+  <slot />
+</main>
+
+<footer class="footer closing footer--dark ground-inverse" id="contact" aria-labelledby="close-h">
+  <div class="wrap">
+    <slot name="close" />
+    <div class="closing__links">
+      <div class="grid">
+        <div class="span-4 stack-4">
+          <a class="nav__logo" href={home ? '#top' : '/'}><span class="mark mark--initial" aria-hidden="true">A</span>Anthony Wekwert</a>
+        </div>
+        <div class="span-2 footer__col"><h3>Work</h3><ul>
+          {projects.filter((p) => p.slug !== 'design-studies').map((p) => <li><a href={`/work/${p.slug}`}>{p.title}</a></li>)}
+        </ul></div>
+        <div class="span-2 footer__col"><h3>Studies</h3><ul>
+          <li><a href="/work/design-studies">Design studies</a></li>
+        </ul></div>
+        <div class="span-2 footer__col"><h3>About</h3><ul>
+          <li><a href="/about">About me</a></li>
+          <li><a href={site.resume}>Resume</a></li>
+        </ul></div>
+        <div class="span-2 footer__col"><h3>Contact</h3><ul>
+          <li><a href={`mailto:${site.email}`}>Email</a></li>
+          <li><a href={site.linkedin} rel="me">LinkedIn</a></li>
+          <li><a href={site.instagram} rel="me">Instagram</a></li>
+        </ul></div>
+      </div>
+      <div class="footer__legal">
+        <span>&copy; 2026 Anthony Wekwert</span>
+        <div class="socials"></div>
+        <a class="credits" href="/credits">Photograph via Unsplash</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<nav class="actionbar" aria-label="Quick actions">
+  <a class="btn btn--primary" href={to('work')}>See the work</a>
+</nav>
+
+<script is:inline type="module" src="/assets/system.js"></script>
+<script is:inline type="module" src="/assets/motion/motion.js"></script>
+<script is:inline type="module" src="/assets/layout/layout.js"></script>
+</body>
+</html>

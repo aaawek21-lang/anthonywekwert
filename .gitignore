@@ -24,3 +24,11 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# tasteskill working files (screenshots, the checker's Chrome profile, reports); keep the plan and decisions
+shots/
+.taste-skill/*
+!.taste-skill/plan.md
+!.taste-skill/waivers.json
+!.taste-skill/history.json
+!.taste-skill/layout-history.json
