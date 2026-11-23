@@ -1,0 +1,313 @@
+---
+/*
+  Project page template. One page per entry in src/data/projects.ts.
+  Layout borrows the resume: the title runs up the left edge as a spine,
+  content sits in a column against it.
+*/
+import Base from '../../layouts/Base.astro';
+import SiteNav from '../../components/SiteNav.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import { projects, type Project } from '../../data/projects';
+import { pad } from '../../lib/format';
+
+export function getStaticPaths() {
+  return projects.map((project, i) => ({
+    params: { slug: project.slug },
+    props: { project, index: i },
+  }));
+}
+
+interface Props {
+  project: Project;
+  index: number;
+}
+
+const { project, index } = Astro.props;
+const next = projects[(index + 1) % projects.length]!;
+
+const specs = [
+  ['Role', project.role],
+  ['Discipline', project.discipline],
+  ['Tools', project.tools],
+  ['Year', project.year],
+];
+---
+
+<Base title={project.title} description={project.summary}>
+  <div class="page">
+    <aside class="spine">
+      <h1>{project.title}</h1>
+    </aside>
+
+    <div class="body">
+      <SiteNav current="work" />
+
+      <main class="content">
+        <section class="intro">
+          <p class="label">{pad(index + 1)} / {pad(projects.length)}</p>
+          <p class="summary">{project.summary}</p>
+
+          <dl class="specs">
+            {
+              specs.map(([term, value]) => (
+                <div>
+                  <dt class="label">{term}</dt>
+                  <dd>{value}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </section>
+
+        <!--
+          Image placeholders. Mixed widths on purpose: one hero that bleeds
+          off the right edge, then pairs and offsets. Swap for real images.
+        -->
+        <section class="images">
+          <figure class="img-lead">
+            <div class="placeholder" style="aspect-ratio: 16 / 10" />
+          </figure>
+
+          <figure class="img-a">
+            <div class="placeholder" style="aspect-ratio: 4 / 5" />
+          </figure>
+          <figure class="img-b">
+            <div class="placeholder" style="aspect-ratio: 1 / 1" />
+            <figcaption class="label">Placeholder caption. What this detail shows.</figcaption>
+          </figure>
+
+          <div class="note">
+            <h2>Placeholder heading</h2>
+            <p>
+              Placeholder text. A few short sentences on the brief, the idea, and the
+              decisions that mattered. Keep it tight.
+            </p>
+          </div>
+
+          <figure class="img-c">
+            <div class="placeholder" style="aspect-ratio: 3 / 2" />
+          </figure>
+        </section>
+
+        <a class="next" href={`/work/${next.slug}`}>
+          <span class="label">Next project</span>
+          <span class="next-name">{next.title}</span>
+        </a>
+      </main>
+
+      <SiteFooter />
+    </div>
+  </div>
+</Base>
+
+<style>
+  .page {
+    display: grid;
+    grid-template-columns: var(--spine) 1fr;
+    --spine: clamp(6rem, 15vw, 13rem);
+  }
+
+  /*
+    The spine. Title rotated to read bottom-to-top, pinned while the
+    content scrolls. Set larger than the column so the left edge
+    of the screen cuts the tops of the letters, like the home page crop.
+  */
+  .spine {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: hidden;
+  }
+
+  .spine h1 {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+    font-size: calc(var(--spine) * 1.45);
+    font-weight: var(--w-heavy);
+    line-height: 0.72;
+    letter-spacing: -0.04em;
+    /*
+      After rotation the letter tops face left. Pushing past left: 0
+      lets the screen edge cut them, same as the home page crop.
+    */
+    position: absolute;
+    bottom: var(--gutter);
+    left: -0.09em;
+  }
+
+  .body {
+    min-width: 0;
+  }
+
+  .content {
+    padding: var(--s-6) var(--gutter) var(--s-7) var(--s-5);
+  }
+
+  /* ---------- Intro + spec sheet ---------- */
+
+  .intro {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--s-4);
+    align-items: start;
+    margin-bottom: var(--s-7);
+  }
+
+  .intro > .label {
+    grid-column: 1 / span 2;
+    padding-top: 0.4rem;
+  }
+
+  .summary {
+    grid-column: 3 / span 6;
+    font-size: var(--t-lg);
+    font-weight: var(--w-regular);
+    line-height: 1.25;
+  }
+
+  /* Like the resume's right-aligned date column. */
+  .specs {
+    grid-column: 10 / -1;
+    margin: 0;
+    display: grid;
+    gap: var(--s-3);
+  }
+
+  .specs div {
+    display: grid;
+    gap: 0.1rem;
+    border-top: 1px solid var(--rule);
+    padding-top: var(--s-2);
+  }
+
+  .specs dd {
+    margin: 0;
+    font-size: var(--t-sm);
+    font-weight: var(--w-heavy);
+  }
+
+  /* ---------- Images ---------- */
+
+  .images {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    column-gap: var(--s-4);
+    row-gap: var(--s-6);
+    align-items: end;
+  }
+
+  .img-lead {
+    grid-column: 1 / -1;
+    margin-right: calc(var(--gutter) * -1);
+  }
+
+  .img-a {
+    grid-column: 1 / span 5;
+  }
+
+  .img-b {
+    grid-column: 7 / span 4;
+  }
+
+  figcaption {
+    margin-top: var(--s-2);
+    max-width: 32ch;
+  }
+
+  .note {
+    grid-column: 3 / span 5;
+    display: grid;
+    gap: var(--s-3);
+  }
+
+  .note h2 {
+    font-size: var(--t-lg);
+    font-weight: var(--w-heavy);
+    line-height: var(--lh-tight);
+  }
+
+  .note p {
+    color: var(--ink-soft);
+    max-width: 52ch;
+  }
+
+  .img-c {
+    grid-column: 5 / -1;
+  }
+
+  /* ---------- Next ---------- */
+
+  .next {
+    display: grid;
+    gap: var(--s-2);
+    margin-top: var(--s-7);
+    padding-top: var(--s-3);
+    border-top: 1px solid var(--rule);
+  }
+
+  .next-name {
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.12em;
+    font-size: var(--t-xl);
+    font-weight: var(--w-heavy);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+  }
+
+  .next:hover .next-name {
+    text-decoration-line: underline;
+  }
+
+  /* ---------- Small screens: spine turns into a cropped header ---------- */
+
+  @media (max-width: 760px) {
+    .page {
+      grid-template-columns: 1fr;
+    }
+
+    .spine {
+      position: static;
+      height: auto;
+      grid-row: 2;
+    }
+
+    .spine h1 {
+      position: static;
+      writing-mode: horizontal-tb;
+      transform: none;
+      font-size: 24vw;
+      margin-left: -0.03em;
+    }
+
+    .body {
+      display: contents;
+    }
+
+    .content {
+      grid-row: 3;
+      padding: var(--s-5) var(--gutter) var(--s-6);
+    }
+
+    .intro,
+    .images {
+      grid-template-columns: 1fr;
+    }
+    .intro > .label,
+    .summary,
+    .specs,
+    .img-a,
+    .img-b,
+    .note,
+    .img-c {
+      grid-column: 1;
+    }
+    .intro {
+      margin-bottom: var(--s-6);
+    }
+    .images {
+      row-gap: var(--s-5);
+    }
+  }
+</style>

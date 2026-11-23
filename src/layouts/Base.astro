@@ -1,0 +1,31 @@
+---
+import '@fontsource-variable/museomoderno';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = 'Anthony Wekwert. Brand designer, Michigan State.',
+} = Astro.props;
+
+const fullTitle = title ? `${title} · Anthony Wekwert` : 'Anthony Wekwert';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#071B2B" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <title>{fullTitle}</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

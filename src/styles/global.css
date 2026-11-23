@@ -1,0 +1,126 @@
+/*
+  Design tokens. Navy ground, cream type, one red accent.
+  One typeface (MuseoModerno), three weights. Nothing else.
+*/
+
+:root {
+  /* Color */
+  --navy: #071b2b;
+  --cream: #e4e2dd;
+  --red: #7a1e24;
+
+  --ground: var(--navy);
+  --ink: var(--cream);
+  --accent: var(--red);
+  /* Cream at reduced strength, for secondary text and rules. Same hue, not a new color. */
+  --ink-soft: color-mix(in srgb, var(--cream) 62%, var(--navy));
+  --rule: color-mix(in srgb, var(--cream) 22%, var(--navy));
+
+  /* Type */
+  --font: 'MuseoModerno Variable', system-ui, sans-serif;
+  --w-light: 300;
+  --w-regular: 450;
+  --w-heavy: 850;
+
+  /*
+    Type scale. Small steps for the spec-sheet text, then a big jump
+    to display sizes. Matches the resume: ~10 / 13 / 23, scaled for screen.
+  */
+  --t-xs: 0.75rem;   /* 12px  dates, labels */
+  --t-sm: 0.875rem;  /* 14px  role lines, captions */
+  --t-base: 1rem;    /* 16px  body */
+  --t-md: 1.25rem;   /* 20px  project names in lists */
+  --t-lg: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem);   /* section headings */
+  --t-xl: clamp(2.5rem, 1.5rem + 5vw, 5.5rem);      /* page titles */
+  --t-mega: 24vw;                                    /* cropped display type */
+
+  --lh-tight: 1.1;
+  --lh-body: 1.5;
+
+  /* Space */
+  --gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 1rem;
+  --s-4: 1.5rem;
+  --s-5: 2.5rem;
+  --s-6: 4rem;
+  --s-7: 7rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font);
+  font-weight: var(--w-regular);
+  font-size: var(--t-base);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, p, ul, ol, figure {
+  margin: 0;
+}
+
+ul, ol {
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/*
+  Red on navy is too dark to read as text (about 1.6:1).
+  So red marks hover and current page as a thick underline instead.
+*/
+a {
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 0.18em;
+  text-underline-offset: 0.22em;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--cream);
+}
+
+/* Small spec-sheet label. Used for dates, categories, index numbers. */
+.label {
+  font-size: var(--t-xs);
+  font-weight: var(--w-regular);
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* Grey block standing in for project images until real work goes in. */
+.placeholder {
+  background: var(--rule);
+  width: 100%;
+}

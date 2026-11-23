@@ -1,0 +1,176 @@
+---
+import Base from '../../layouts/Base.astro';
+import SiteNav from '../../components/SiteNav.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import { projects } from '../../data/projects';
+import { pad } from '../../lib/format';
+---
+
+<Base title="Work">
+  <SiteNav current="work" />
+
+  <header class="head">
+    <!-- Same move as the home page: too big for the frame, pushed off the right edge. -->
+    <h1 class="mega">Work</h1>
+    <p class="label count">{pad(projects.length)} projects</p>
+  </header>
+
+  <main class="sheet">
+    <div class="row cols" aria-hidden="true">
+      <span class="label">No.</span>
+      <span></span>
+      <span class="label">Project</span>
+      <span class="label">Discipline</span>
+      <span class="label year">Year</span>
+    </div>
+
+    <ol>
+      {
+        projects.map((p, i) => (
+          <li>
+            <a class="row item" href={`/work/${p.slug}`}>
+              <span class="label">{pad(i + 1)}</span>
+              <div class="placeholder thumb" />
+              <div class="title">
+                <span class="name">{p.title}</span>
+                <span class="summary">{p.summary}</span>
+              </div>
+              <span class="label disc">{p.discipline}</span>
+              <span class="label year">{p.year}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </main>
+
+  <SiteFooter />
+</Base>
+
+<style>
+  .head {
+    position: relative;
+    overflow: hidden;
+    padding-top: var(--s-6);
+  }
+
+  /*
+    Right-aligned and pushed past the right edge so the "k" is cut.
+    The page weight sits on the right, the list hangs below it.
+  */
+  .mega {
+    font-size: 31vw;
+    font-weight: var(--w-heavy);
+    line-height: 0.72;
+    letter-spacing: -0.045em;
+    white-space: nowrap;
+    text-align: right;
+    margin-right: -0.14em;
+  }
+
+  .count {
+    position: absolute;
+    left: var(--gutter);
+    bottom: 0;
+  }
+
+  .sheet {
+    padding: var(--s-6) var(--gutter) var(--s-7);
+  }
+
+  /* Spec-sheet row: number, thumbnail, title, discipline, year. */
+  .row {
+    display: grid;
+    grid-template-columns: 3rem minmax(8rem, 14rem) 1fr 10rem 4rem;
+    gap: var(--s-4);
+    align-items: start;
+  }
+
+  .cols {
+    padding-bottom: var(--s-2);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .item {
+    padding: var(--s-4) 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .item > .label {
+    /* Line labels up with the project name's first line. */
+    padding-top: 0.35rem;
+  }
+
+  .thumb {
+    aspect-ratio: 4 / 3;
+  }
+
+  .title {
+    display: grid;
+    gap: var(--s-1);
+  }
+
+  .name {
+    font-size: var(--t-lg);
+    font-weight: var(--w-heavy);
+    line-height: var(--lh-tight);
+  }
+
+  .summary {
+    font-size: var(--t-sm);
+    color: var(--ink-soft);
+    max-width: 40ch;
+  }
+
+  .year {
+    text-align: right;
+  }
+
+  .item:hover .name {
+    text-decoration-line: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 0.12em;
+    text-underline-offset: 0.15em;
+  }
+
+  @media (max-width: 760px) {
+    .mega {
+      font-size: 42vw;
+    }
+
+    .count {
+      position: static;
+      padding: var(--s-3) var(--gutter) 0;
+    }
+
+    .sheet {
+      padding-top: var(--s-5);
+    }
+
+    .cols {
+      display: none;
+    }
+
+    /* Thumbnail on top, then number + name, discipline and year on one line. */
+    .row {
+      grid-template-columns: 2rem 1fr auto;
+      row-gap: var(--s-2);
+    }
+    .thumb {
+      grid-column: 1 / -1;
+      grid-row: 1;
+    }
+    .title {
+      grid-column: 2 / -1;
+    }
+    .disc {
+      grid-column: 2;
+    }
+    .year {
+      grid-column: 3;
+    }
+    .item > .label {
+      padding-top: 0;
+    }
+  }
+</style>

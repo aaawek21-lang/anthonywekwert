@@ -1,16 +1,252 @@
 ---
+import Base from '../layouts/Base.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { projects } from '../data/projects';
+import { pad } from '../lib/format';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Base>
+  <header class="hero">
+    <h1 class="mega" aria-label="Anthony Wekwert">
+      <span aria-hidden="true">Wekwert</span>
+    </h1>
+
+    <div class="strip">
+      <p class="label who">Brand designer<br />East Lansing, MI</p>
+
+      <div class="intro">
+        <p>
+          Placeholder intro. One or two short sentences on what Anthony makes and
+          who he makes it for.
+        </p>
+        <nav aria-label="Main">
+          <a href="/work">Work</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
+
+      <p class="url">anthonywekwert.com</p>
+    </div>
+  </header>
+
+  <main class="work">
+    <div class="work-head">
+      <h2>Selected work</h2>
+      <span class="label">{pad(projects.length)} projects</span>
+    </div>
+
+    <ol class="list">
+      {
+        projects.map((p, i) => (
+          <li class:list={['item', `item-${i + 1}`]}>
+            <a href={`/work/${p.slug}`}>
+              <div class="placeholder frame" />
+              <div class="meta">
+                <span class="label">{pad(i + 1)}</span>
+                <span class="name">{p.title}</span>
+                <span class="label">{p.discipline}</span>
+                <span class="label year">{p.year}</span>
+              </div>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </main>
+
+  <SiteFooter />
+</Base>
+
+<style>
+  /* ---------- Hero: the banner move ---------- */
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+  }
+
+  /*
+    The surname is set too big for the frame on purpose.
+    Negative top margin pushes the cap height past the top edge,
+    and the word runs past the right edge. No centering.
+  */
+  .mega {
+    font-size: var(--t-mega);
+    font-weight: var(--w-heavy);
+    line-height: 0.7;
+    letter-spacing: -0.045em;
+    white-space: nowrap;
+    margin-top: -0.06em;
+    margin-left: -0.035em;
+  }
+
+  .strip {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--s-4);
+    align-items: end;
+    padding: var(--s-5) var(--gutter) var(--s-4);
+  }
+
+  .who {
+    grid-column: 1 / span 3;
+    line-height: 1.4;
+  }
+
+  .intro {
+    grid-column: 7 / span 4;
+    display: grid;
+    gap: var(--s-3);
+    font-size: var(--t-sm);
+    line-height: 1.45;
+    max-width: 34ch;
+  }
+
+  .intro nav {
+    display: flex;
+    gap: var(--s-4);
+    font-weight: var(--w-heavy);
+  }
+
+  .intro nav a:hover,
+  .item a:hover .name {
+    text-decoration-line: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 0.18em;
+    text-underline-offset: 0.22em;
+  }
+
+  .url {
+    grid-column: 11 / -1;
+    justify-self: end;
+    font-size: var(--t-xs);
+    font-weight: var(--w-light);
+  }
+
+  /* ---------- Work list ---------- */
+
+  .work {
+    padding: var(--s-7) var(--gutter) var(--s-6);
+  }
+
+  .work-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: var(--s-2);
+    margin-bottom: var(--s-5);
+  }
+
+  .work-head h2 {
+    font-size: var(--t-lg);
+    font-weight: var(--w-heavy);
+    line-height: var(--lh-tight);
+  }
+
+  /*
+    Asymmetric grid. Big lead piece bleeds off the right edge,
+    the rest step down in different widths instead of an even grid.
+  */
+  .list {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    column-gap: var(--s-4);
+    row-gap: var(--s-6);
+  }
+
+  .item a {
+    display: block;
+  }
+
+  .frame {
+    aspect-ratio: 4 / 3;
+  }
+
+  .item-1 {
+    grid-column: 4 / -1;
+    margin-right: calc(var(--gutter) * -1);
+  }
+  .item-1 .frame {
+    aspect-ratio: 16 / 9;
+  }
+  .item-1 .meta {
+    padding-right: var(--gutter);
+  }
+
+  .item-2 {
+    grid-column: 1 / span 5;
+  }
+  .item-3 {
+    grid-column: 7 / span 6;
+    margin-top: var(--s-7);
+  }
+  .item-4 {
+    grid-column: 2 / span 7;
+  }
+
+  .meta {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr auto auto;
+    gap: var(--s-3);
+    align-items: baseline;
+    padding-top: var(--s-2);
+  }
+
+  .name {
+    font-size: var(--t-md);
+    font-weight: var(--w-heavy);
+    line-height: var(--lh-tight);
+  }
+
+  .year {
+    min-width: 2.5rem;
+    text-align: right;
+  }
+
+  /* ---------- Small screens ---------- */
+
+  @media (max-width: 760px) {
+    /* On a phone the full word gets too thin. Go bigger and crop harder. */
+    .mega {
+      font-size: 34vw;
+    }
+
+    .work {
+      padding-top: var(--s-6);
+    }
+
+    .strip {
+      grid-template-columns: 1fr 1fr;
+      row-gap: var(--s-4);
+    }
+    .who {
+      grid-column: 1;
+    }
+    .intro {
+      grid-column: 1 / -1;
+      grid-row: 1;
+    }
+    .url {
+      grid-column: 2;
+    }
+
+    .list {
+      grid-template-columns: 1fr;
+      row-gap: var(--s-5);
+    }
+    .item-1,
+    .item-2,
+    .item-3,
+    .item-4 {
+      grid-column: 1;
+      margin-top: 0;
+    }
+    .meta {
+      grid-template-columns: 2rem 1fr auto;
+    }
+    .meta .year {
+      display: none;
+    }
+  }
+</style>

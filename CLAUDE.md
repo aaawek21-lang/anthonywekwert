@@ -48,6 +48,34 @@ Other faces he's open to for display: Degular Display, Obviously, Neue Haas Grot
 
 Avoid: Helvetica, Poppins, Montserrat, anything that reads as a default.
 
+## Existing design system (follow this)
+
+Two pieces he already built and likes. The site should read as the same hand. Treat them as the reference, not as things to reinvent.
+
+### LinkedIn banner
+
+Navy ground, cream type. His surname set oversized in a heavy geometric sans, scaled so the letterforms are cut off by the top and right edges of the frame. Baseline raised to leave a clear strip across the bottom, with `anthonywekwert.com` small and light in the bottom-right corner, right edge aligned to the cropped type above it.
+
+The principle that made it work: **the type is too big for its container, on purpose.** The crop creates the tension. The version where the full word sat centered with even margins was dead, and scaling up plus cropping is what fixed it.
+
+### Resume (Canva)
+
+Same navy and cream. Full name set very large, rotated, running up the left edge of the page as a vertical spine. Content in a right-hand column against it.
+
+- Section headings: lowercase in the source, rendered uppercase, ~23px bold
+- Company name bold ~13px, role line beneath it ~10px, description ~10px
+- Dates in a right-aligned column, baseline-aligned to each company name
+- Lower half splits into two columns: skills left, education right
+
+### The system both share
+
+- **Palette:** navy `#071B2B` ground, cream `#E4E2DD` type, deep red `#7A1E24` accent. Two colors plus one accent, nothing else.
+- **Type does the work.** One geometric sans, two or three weights. No second typeface.
+- **Oversized type cropped by the frame edge** is the signature move. Use it on the site.
+- **Asymmetric and right- or edge-weighted.** Avoid centered layouts with even margins — that's the thing he keeps having to fix.
+- **Flat.** No textures, gradients, drop shadows, or glows. An earlier banner used a stock torn-paper texture and the whole point of the rework was getting rid of it.
+- **Dense blocks against open space.** Content packed tight, surrounded by air, rather than evenly distributed.
+
 ## Work to feature
 
 From his existing portfolio:
