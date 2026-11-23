@@ -15,6 +15,8 @@
   /* Cream at reduced strength, for secondary text and rules. Same hue, not a new color. */
   --ink-soft: color-mix(in srgb, var(--cream) 62%, var(--navy));
   --rule: color-mix(in srgb, var(--cream) 22%, var(--navy));
+  /* Slightly lifted navy for card fills. Still navy, just lighter. */
+  --navy-lift: color-mix(in srgb, var(--cream) 9%, var(--navy));
 
   /* Type */
   --font: 'MuseoModerno Variable', system-ui, sans-serif;

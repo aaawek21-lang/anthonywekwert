@@ -9,6 +9,8 @@ export interface Project {
   role: string;
   tools: string;
   summary: string;
+  // Flat fill for the project card on the home page. Stays inside the palette.
+  tone: 'red' | 'cream' | 'deep';
 }
 
 export const projects: Project[] = [
@@ -20,6 +22,7 @@ export const projects: Project[] = [
     role: 'Placeholder role',
     tools: 'Placeholder tools',
     summary: 'One line on what this was and why it matters.',
+    tone: 'red',
   },
   {
     slug: 'project-two',
@@ -29,6 +32,7 @@ export const projects: Project[] = [
     role: 'Placeholder role',
     tools: 'Placeholder tools',
     summary: 'One line on what this was and why it matters.',
+    tone: 'cream',
   },
   {
     slug: 'project-three',
@@ -38,14 +42,6 @@ export const projects: Project[] = [
     role: 'Placeholder role',
     tools: 'Placeholder tools',
     summary: 'One line on what this was and why it matters.',
-  },
-  {
-    slug: 'project-four',
-    title: 'Project four',
-    discipline: 'Wayfinding',
-    year: '2025',
-    role: 'Placeholder role',
-    tools: 'Placeholder tools',
-    summary: 'One line on what this was and why it matters.',
+    tone: 'deep',
   },
 ];

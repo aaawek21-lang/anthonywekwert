@@ -3,24 +3,50 @@ import Base from '../layouts/Base.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import { projects } from '../data/projects';
 import { pad } from '../lib/format';
+
+// Placeholder about content. Swap for real numbers and quotes from the resume.
+const stats = [
+  { value: '0X', label: 'Years designing' },
+  { value: '00', label: 'Projects shipped' },
+  { value: '00', label: 'Awards' },
+];
+
+const reviews = [
+  {
+    quote:
+      'Placeholder review. Two or three sentences from a teammate on what it was like to work with Anthony.',
+    name: 'Teammate name',
+    role: 'Role, team or company',
+  },
+  {
+    quote: 'Placeholder review. A shorter one works here. Specific beats glowing.',
+    name: 'Teammate name',
+    role: 'Role, team or company',
+  },
+  {
+    quote:
+      'Placeholder review. Pick quotes that name a real thing he did, not just that he was great.',
+    name: 'Teammate name',
+    role: 'Role, team or company',
+  },
+];
 ---
 
 <Base>
+  <!-- ---------- Hero ---------- -->
   <header class="hero">
     <h1 class="mega" aria-label="Anthony Wekwert">
       <span aria-hidden="true">Wekwert</span>
     </h1>
 
     <div class="strip">
-      <p class="label who">Brand designer<br />East Lansing, MI</p>
+      <p class="label who">Anthony Wekwert<br />Senior design student, Michigan State</p>
 
       <div class="intro">
-        <p>
-          Placeholder intro. One or two short sentences on what Anthony makes and
-          who he makes it for.
-        </p>
+        <p>Placeholder intro. One sentence on what Anthony makes and who for.</p>
         <nav aria-label="Main">
-          <a href="/work">Work</a>
+          <a href="#work">Work</a>
+          <a href="#about">About</a>
           <a href="#contact">Contact</a>
         </nav>
       </div>
@@ -29,29 +55,92 @@ import { pad } from '../lib/format';
     </div>
   </header>
 
-  <main class="work">
-    <div class="work-head">
-      <h2>Selected work</h2>
-      <span class="label">{pad(projects.length)} projects</span>
-    </div>
+  <main>
+    <!-- ---------- Work: starts inside the first screen ---------- -->
+    <section class="work" id="work" aria-labelledby="work-title">
+      <div class="section-head">
+        <h2 id="work-title">Selected work</h2>
+        <a class="all" href="/work">View all work</a>
+      </div>
 
-    <ol class="list">
-      {
-        projects.map((p, i) => (
-          <li class:list={['item', `item-${i + 1}`]}>
-            <a href={`/work/${p.slug}`}>
-              <div class="placeholder frame" />
-              <div class="meta">
-                <span class="label">{pad(i + 1)}</span>
-                <span class="name">{p.title}</span>
-                <span class="label">{p.discipline}</span>
-                <span class="label year">{p.year}</span>
+      <ol class="cards">
+        {
+          projects.map((p, i) => (
+            <li class:list={['card', `card-${i + 1}`]}>
+              <a href={`/work/${p.slug}`}>
+                {/* Flat fill with the title cropped by the card edge. Real image goes here later. */}
+                <div class:list={['fill', `tone-${p.tone}`]}>
+                  <span class="label fill-no">{pad(i + 1)}</span>
+                  <span class="fill-title" aria-hidden="true">
+                    {p.title}
+                  </span>
+                </div>
+                <div class="meta">
+                  <span class="name">{p.title}</span>
+                  <span class="tag">{p.discipline}</span>
+                  <p class="summary">{p.summary}</p>
+                </div>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <!-- ---------- About ---------- -->
+    <section class="about" id="about" aria-labelledby="about-title">
+      <div class="section-head">
+        <h2 id="about-title">About</h2>
+        <span class="label">Placeholder copy</span>
+      </div>
+
+      <p class="statement">
+        Placeholder design philosophy. One line on how Anthony thinks about the work.
+      </p>
+
+      <div class="about-grid">
+        <div class="philosophy">
+          <p>
+            Placeholder paragraph. A few short sentences on process: how a project starts,
+            what he looks for, and what he won't do.
+          </p>
+          <p>
+            Placeholder paragraph. Where he's headed next, and the kind of team he wants to
+            join.
+          </p>
+        </div>
+
+        <dl class="stats">
+          {
+            stats.map((s) => (
+              <div>
+                <dt class="label">{s.label}</dt>
+                <dd>{s.value}</dd>
               </div>
-            </a>
-          </li>
-        ))
-      }
-    </ol>
+            ))
+          }
+        </dl>
+      </div>
+
+      <div class="reviews">
+        <h3 class="label">From teammates</h3>
+        <ul>
+          {
+            reviews.map((r) => (
+              <li>
+                <blockquote>
+                  <p>{r.quote}</p>
+                </blockquote>
+                <p class="who-said">
+                  <span class="name-sm">{r.name}</span>
+                  <span class="label">{r.role}</span>
+                </p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
   </main>
 
   <SiteFooter />
@@ -85,18 +174,18 @@ import { pad } from '../lib/format';
     grid-template-columns: repeat(12, 1fr);
     gap: var(--s-4);
     align-items: end;
-    padding: var(--s-5) var(--gutter) var(--s-4);
+    padding: var(--s-4) var(--gutter) var(--s-3);
   }
 
   .who {
-    grid-column: 1 / span 3;
+    grid-column: 1 / span 4;
     line-height: 1.4;
   }
 
   .intro {
     grid-column: 7 / span 4;
     display: grid;
-    gap: var(--s-3);
+    gap: var(--s-2);
     font-size: var(--t-sm);
     line-height: 1.45;
     max-width: 34ch;
@@ -108,14 +197,6 @@ import { pad } from '../lib/format';
     font-weight: var(--w-heavy);
   }
 
-  .intro nav a:hover,
-  .item a:hover .name {
-    text-decoration-line: underline;
-    text-decoration-color: var(--accent);
-    text-decoration-thickness: 0.18em;
-    text-underline-offset: 0.22em;
-  }
-
   .url {
     grid-column: 11 / -1;
     justify-self: end;
@@ -123,85 +204,268 @@ import { pad } from '../lib/format';
     font-weight: var(--w-light);
   }
 
-  /* ---------- Work list ---------- */
-
-  .work {
-    padding: var(--s-7) var(--gutter) var(--s-6);
+  /* Red as an underline only. Red text on navy is too dark to read. */
+  .intro nav a:hover,
+  .all:hover,
+  .card a:hover .name {
+    text-decoration-line: underline;
   }
 
-  .work-head {
+  /* ---------- Shared section head ---------- */
+
+  .section-head {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
+    gap: var(--s-4);
     border-bottom: 1px solid var(--rule);
     padding-bottom: var(--s-2);
-    margin-bottom: var(--s-5);
+    margin-bottom: var(--s-4);
   }
 
-  .work-head h2 {
+  .section-head h2 {
     font-size: var(--t-lg);
     font-weight: var(--w-heavy);
     line-height: var(--lh-tight);
   }
 
-  /*
-    Asymmetric grid. Big lead piece bleeds off the right edge,
-    the rest step down in different widths instead of an even grid.
-  */
-  .list {
+  .all {
+    font-size: var(--t-sm);
+    font-weight: var(--w-heavy);
+  }
+
+  /* ---------- Work cards ---------- */
+
+  .work {
+    padding: var(--s-5) var(--gutter) var(--s-7);
+  }
+
+  /* Uneven on purpose: 7 + 5 on top, a wide one under that bleeds right. */
+  .cards {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     column-gap: var(--s-4);
     row-gap: var(--s-6);
   }
 
-  .item a {
+  .card a {
     display: block;
   }
 
-  .frame {
-    aspect-ratio: 4 / 3;
+  .card-1 {
+    grid-column: 1 / span 7;
   }
-
-  .item-1 {
+  .card-2 {
+    grid-column: 8 / -1;
+  }
+  .card-3 {
     grid-column: 4 / -1;
     margin-right: calc(var(--gutter) * -1);
   }
-  .item-1 .frame {
-    aspect-ratio: 16 / 9;
-  }
-  .item-1 .meta {
+  .card-3 .meta {
     padding-right: var(--gutter);
   }
 
-  .item-2 {
-    grid-column: 1 / span 5;
+  .fill {
+    position: relative;
+    overflow: hidden;
+    height: clamp(16rem, 34vw, 34rem);
   }
-  .item-3 {
-    grid-column: 7 / span 6;
-    margin-top: var(--s-7);
+  .card-3 .fill {
+    height: clamp(14rem, 26vw, 26rem);
   }
-  .item-4 {
-    grid-column: 2 / span 7;
+
+  .tone-red {
+    background: var(--red);
+    color: var(--cream);
+  }
+  .tone-cream {
+    background: var(--cream);
+    color: var(--navy);
+  }
+  .tone-deep {
+    background: var(--navy-lift);
+    color: var(--cream);
+  }
+
+  .fill-no {
+    position: absolute;
+    top: var(--s-3);
+    left: var(--s-3);
+    color: inherit;
+    opacity: 0.7;
+  }
+
+  /* The title runs off the bottom-right of its card. Same crop, smaller frame. */
+  .fill-title {
+    position: absolute;
+    left: var(--s-3);
+    bottom: -0.2em;
+    font-size: clamp(4rem, 11vw, 11rem);
+    font-weight: var(--w-heavy);
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+  }
+  .card-2 .fill-title {
+    font-size: clamp(4rem, 9vw, 9rem);
   }
 
   .meta {
     display: grid;
-    grid-template-columns: 2.5rem 1fr auto auto;
-    gap: var(--s-3);
+    grid-template-columns: auto auto 1fr;
+    gap: var(--s-2) var(--s-3);
     align-items: baseline;
-    padding-top: var(--s-2);
+    padding-top: var(--s-3);
   }
 
   .name {
     font-size: var(--t-md);
     font-weight: var(--w-heavy);
     line-height: var(--lh-tight);
+    text-decoration-thickness: 0.12em;
   }
 
-  .year {
-    min-width: 2.5rem;
+  .tag {
+    justify-self: start;
+    font-size: var(--t-xs);
+    padding: 0.1rem 0.55rem;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    color: var(--ink-soft);
+  }
+
+  .summary {
+    justify-self: end;
     text-align: right;
+    font-size: var(--t-sm);
+    font-style: italic;
+    font-weight: var(--w-light);
+    color: var(--ink-soft);
+    max-width: 34ch;
+  }
+
+  /* ---------- About ---------- */
+
+  .about {
+    padding: 0 var(--gutter) var(--s-7);
+  }
+
+  /* The one italic moment, borrowed from the moodboard. Same typeface, no second font. */
+  .statement {
+    font-size: var(--t-xl);
+    font-style: italic;
+    font-weight: var(--w-light);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    max-width: 18ch;
+    margin: var(--s-6) 0 var(--s-7) auto;
+    width: min(100%, 70%);
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--s-4);
+    align-items: start;
+    margin-bottom: var(--s-7);
+  }
+
+  .philosophy {
+    grid-column: 1 / span 5;
+    display: grid;
+    gap: var(--s-3);
+    color: var(--ink-soft);
+    max-width: 46ch;
+  }
+
+  /* Stats packed tight on the right, open space on the left. */
+  .stats {
+    grid-column: 7 / -1;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--s-4);
+  }
+
+  .stats div {
+    border-top: 1px solid var(--rule);
+    padding-top: var(--s-2);
+    display: flex;
+    flex-direction: column-reverse;
+    gap: var(--s-1);
+  }
+
+  .stats dd {
+    margin: 0;
+    font-size: clamp(3rem, 2rem + 4vw, 6rem);
+    font-weight: var(--w-heavy);
+    line-height: 0.85;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .reviews h3 {
+    margin-bottom: var(--s-3);
+  }
+
+  .reviews ul {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--s-4);
+  }
+
+  .reviews li {
+    border-top: 1px solid var(--rule);
+    padding-top: var(--s-3);
+    display: grid;
+    gap: var(--s-4);
+    align-content: start;
+  }
+
+  /* Uneven widths, the first quote leads. */
+  .reviews li:nth-child(1) {
+    grid-column: 1 / span 5;
+  }
+  .reviews li:nth-child(2) {
+    grid-column: 6 / span 3;
+  }
+  .reviews li:nth-child(3) {
+    grid-column: 9 / -1;
+  }
+
+  blockquote {
+    margin: 0;
+  }
+
+  /* Red used as a flat mark, where it doesn't have to be read as text. */
+  blockquote p::before {
+    content: '“';
+    display: block;
+    color: var(--accent);
+    font-size: 4rem;
+    font-weight: var(--w-heavy);
+    line-height: 0.6;
+    margin-bottom: var(--s-2);
+  }
+
+  blockquote p {
+    font-size: var(--t-md);
+    line-height: 1.35;
+  }
+  .reviews li:nth-child(1) blockquote p {
+    font-size: var(--t-lg);
+    line-height: 1.2;
+  }
+
+  .who-said {
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .name-sm {
+    font-size: var(--t-sm);
+    font-weight: var(--w-heavy);
   }
 
   /* ---------- Small screens ---------- */
@@ -212,13 +476,9 @@ import { pad } from '../lib/format';
       font-size: 34vw;
     }
 
-    .work {
-      padding-top: var(--s-6);
-    }
-
     .strip {
       grid-template-columns: 1fr 1fr;
-      row-gap: var(--s-4);
+      row-gap: var(--s-3);
     }
     .who {
       grid-column: 1;
@@ -231,22 +491,58 @@ import { pad } from '../lib/format';
       grid-column: 2;
     }
 
-    .list {
+    .work {
+      padding-top: var(--s-4);
+      padding-bottom: var(--s-6);
+    }
+
+    .cards {
       grid-template-columns: 1fr;
       row-gap: var(--s-5);
     }
-    .item-1,
-    .item-2,
-    .item-3,
-    .item-4 {
+    .card-1,
+    .card-2,
+    .card-3 {
       grid-column: 1;
-      margin-top: 0;
     }
+    .fill,
+    .card-3 .fill {
+      height: 62vw;
+    }
+    .fill-title,
+    .card-2 .fill-title {
+      font-size: 22vw;
+    }
+
     .meta {
-      grid-template-columns: 2rem 1fr auto;
+      grid-template-columns: auto 1fr;
     }
-    .meta .year {
-      display: none;
+    .summary {
+      grid-column: 1 / -1;
+      justify-self: start;
+      text-align: left;
+    }
+
+    .statement {
+      width: 100%;
+      margin: var(--s-5) 0 var(--s-6);
+    }
+
+    .about-grid,
+    .reviews ul {
+      grid-template-columns: 1fr;
+    }
+    .philosophy,
+    .stats,
+    .reviews li:nth-child(n) {
+      grid-column: 1;
+    }
+    .stats {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--s-3);
+    }
+    .stats dd {
+      font-size: 13vw;
     }
   }
 </style>
