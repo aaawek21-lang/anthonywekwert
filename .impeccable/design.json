@@ -1,0 +1,245 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-23T03:47:05.282583+00:00",
+  "title": "Design System: Anthony Wekwert",
+  "extensions": {
+    "colorMeta": {
+      "navy": {
+        "role": "neutral",
+        "displayName": "Navy",
+        "canonical": "#071b2b",
+        "tonalRamp": [
+          "#030d15",
+          "#071b2b",
+          "#1b2d3b",
+          "#2c3e4c",
+          "#384752",
+          "#5b6a75",
+          "#909699",
+          "#c4c6c6"
+        ]
+      },
+      "cream": {
+        "role": "neutral",
+        "displayName": "Cream",
+        "canonical": "#e4e2dd",
+        "tonalRamp": [
+          "#3d3c39",
+          "#5e5d59",
+          "#7f7d79",
+          "#a19f9a",
+          "#c3c1bc",
+          "#d6d4cf",
+          "#e4e2dd",
+          "#f3f2ef"
+        ]
+      },
+      "red": {
+        "role": "primary",
+        "displayName": "Red",
+        "canonical": "#7a1e24",
+        "tonalRamp": [
+          "#2a0a0c",
+          "#4a1216",
+          "#7a1e24",
+          "#963a40",
+          "#b0605f",
+          "#c98a87",
+          "#dfb5b2",
+          "#f1dedc"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Ink soft",
+        "canonical": "color-mix(in srgb, var(--cream) 62%, var(--navy))"
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Rule",
+        "canonical": "color-mix(in srgb, var(--cream) 22%, var(--navy))"
+      },
+      "navy-lift": {
+        "role": "neutral",
+        "displayName": "Navy lift",
+        "canonical": "color-mix(in srgb, var(--cream) 9%, var(--navy))"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The cropped word. One per page, always cut by an edge."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Big page-level names like the next-project link."
+      },
+      "statement": {
+        "displayName": "Statement",
+        "purpose": "The one light italic line in About."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Section headings and project names in lists."
+      },
+      "title-sm": {
+        "displayName": "Title small",
+        "purpose": "Card names and quote text."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Paragraphs."
+      },
+      "body-sm": {
+        "displayName": "Body small",
+        "purpose": "Nav, buttons, spec values, summaries."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Dates, categories, index numbers, spec labels."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "fade-slide",
+        "value": "opacity 0.4s ease",
+        "purpose": "Hero image crossfade between projects."
+      },
+      {
+        "name": "tone-flip",
+        "value": "color 0.3s ease",
+        "purpose": "Hero type flips navy/cream with the frame."
+      },
+      {
+        "name": "nudge",
+        "value": "transform 0.2s ease",
+        "purpose": "CTA arrow moves 0.25rem right on hover."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "phone",
+        "value": "760px"
+      },
+      {
+        "name": "laptop",
+        "value": "1100px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Call to action",
+      "kind": "button",
+      "refersTo": "button-cta",
+      "description": "The one solid block per screen. Cream on navy.",
+      "html": "<a class=\"ds-cta\" href=\"#\">View project <span aria-hidden=\"true\">→</span></a>",
+      "css": ".ds-cta{display:inline-flex;align-items:center;gap:.5rem;padding:1rem 2.5rem;background:var(--cream,#e4e2dd);color:var(--navy,#071b2b);font-family:'MuseoModerno Variable',system-ui,sans-serif;font-size:.875rem;font-weight:850;text-decoration:none;border-radius:0}.ds-cta span{transition:transform .2s ease}.ds-cta:hover span{transform:translateX(.25rem)}.ds-cta:focus-visible{outline:2px solid var(--navy,#071b2b);outline-offset:-4px}"
+    },
+    {
+      "name": "Project switcher",
+      "kind": "custom",
+      "refersTo": "switch-button",
+      "description": "Hero bar buttons. Selected flips to cream.",
+      "html": "<div class=\"ds-switch\"><button aria-pressed=\"true\"><span class=\"ds-sw ds-red\"></span>Project one</button><button aria-pressed=\"false\"><span class=\"ds-sw ds-cream\"></span>Project two</button></div>",
+      "css": ".ds-switch{display:inline-flex;background:var(--navy,#071b2b);border:1px solid var(--rule,#384752)}.ds-switch button{display:flex;align-items:center;gap:.5rem;padding:1rem 1.5rem 1rem 1rem;border:0;border-right:1px solid var(--rule,#384752);background:transparent;color:var(--ink-soft,#909699);font-family:'MuseoModerno Variable',system-ui,sans-serif;font-size:.875rem;font-weight:850;cursor:pointer}.ds-switch button:last-child{border-right:0}.ds-switch button:hover{color:var(--cream,#e4e2dd)}.ds-switch button[aria-pressed=true]{background:var(--cream,#e4e2dd);color:var(--navy,#071b2b)}.ds-switch button:focus-visible{outline:2px solid currentColor;outline-offset:-4px}.ds-sw{width:1.75rem;height:1.75rem;outline:1px solid var(--rule,#384752)}.ds-red{background:var(--red,#7a1e24)}.ds-cream{background:var(--cream,#e4e2dd)}"
+    },
+    {
+      "name": "Discipline tag",
+      "kind": "chip",
+      "refersTo": "tag",
+      "description": "Square, hairline border, like everything else.",
+      "html": "<span class=\"ds-tag\">Packaging</span>",
+      "css": ".ds-tag{display:inline-block;font-family:'MuseoModerno Variable',system-ui,sans-serif;font-size:.75rem;padding:.1rem .55rem;border:1px solid var(--rule,#384752);border-radius:0;color:var(--ink-soft,#909699)}"
+    },
+    {
+      "name": "Project card",
+      "kind": "card",
+      "refersTo": "card-fill-red",
+      "description": "Flat fill with the title cropped off the bottom-right.",
+      "html": "<a class=\"ds-card\" href=\"#\"><div class=\"ds-fill\"><span class=\"ds-no\">01</span><span class=\"ds-big\">Project</span></div><div class=\"ds-meta\"><span class=\"ds-name\">Project one</span></div></a>",
+      "css": ".ds-card{display:block;width:22rem;color:var(--cream,#e4e2dd);text-decoration:none;font-family:'MuseoModerno Variable',system-ui,sans-serif}.ds-fill{position:relative;overflow:hidden;height:14rem;background:var(--red,#7a1e24)}.ds-no{position:absolute;top:1rem;left:1rem;font-size:.75rem;opacity:.7}.ds-big{position:absolute;left:1rem;bottom:-.2em;font-size:7rem;font-weight:850;line-height:.8;letter-spacing:-.04em;white-space:nowrap}.ds-meta{padding-top:1rem}.ds-name{font-size:1.25rem;font-weight:850;text-decoration-color:var(--red,#7a1e24);text-decoration-thickness:.12em;text-underline-offset:.22em}.ds-card:hover .ds-name{text-decoration-line:underline}"
+    },
+    {
+      "name": "Spec block",
+      "kind": "custom",
+      "description": "Resume-style label over heavy value, hairline above.",
+      "html": "<dl class=\"ds-spec\"><div><dt>Role</dt><dd>Designer</dd></div><div><dt>Year</dt><dd>2026</dd></div></dl>",
+      "css": ".ds-spec{display:grid;gap:1rem;margin:0;width:12rem;font-family:'MuseoModerno Variable',system-ui,sans-serif;color:var(--cream,#e4e2dd)}.ds-spec div{border-top:1px solid var(--rule,#384752);padding-top:.5rem}.ds-spec dt{font-size:.75rem;color:var(--ink-soft,#909699);letter-spacing:.02em}.ds-spec dd{margin:0;font-size:.875rem;font-weight:850}"
+    },
+    {
+      "name": "Nav",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Heavy small links, red underline on hover and current page.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#\">Anthony Wekwert</a><span><a href=\"#\" aria-current=\"page\">Work</a><a href=\"#\">About</a><a href=\"#\">Contact</a></span></nav>",
+      "css": ".ds-nav{display:flex;justify-content:space-between;gap:1.5rem;padding:1rem 1.5rem;font-family:'MuseoModerno Variable',system-ui,sans-serif;font-size:.875rem;font-weight:850;background:var(--navy,#071b2b);color:var(--cream,#e4e2dd)}.ds-nav span{display:flex;gap:1.5rem}.ds-nav a{color:inherit;text-decoration:none;text-decoration-color:var(--red,#7a1e24);text-decoration-thickness:.18em;text-underline-offset:.22em}.ds-nav a:hover,.ds-nav a[aria-current=page]{text-decoration-line:underline}.ds-nav a:focus-visible{outline:2px solid var(--cream,#e4e2dd);outline-offset:3px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Too big for the frame",
+    "overview": "The whole site grows out of one move from Anthony's LinkedIn banner: a word set so large the edge of the screen cuts it off. The crop is what makes it feel alive. A word sitting whole in the middle with even space around it looks dead. So every page has one piece of type that's too big for its box, and it gets cut by the top, right, or left edge.\n\nNext to that big gesture, everything else is quiet and exact. Small text is packed into tight blocks like a resume: a label, a value, a thin line between them. Big type and tight blocks sit in open navy space. Layouts lean to one side on purpose. Nothing is centered just to be safe.\n\nIt's flat. Three colors, one typeface, no shadows, no gradients, no textures. If a layout needs decoration to hold together, the layout is wrong.",
+    "keyCharacteristics": [
+      "One oversized word per page, cut by the edge of the screen.",
+      "Resume-style spec blocks: small label over a heavy value, split by hairlines.",
+      "Navy ground, cream type, red used sparingly as a fill or mark.",
+      "One typeface, MuseoModerno, in light, regular, and heavy.",
+      "Square corners and flat fills everywhere.",
+      "Asymmetric 12-column layouts that lean right or bleed off an edge."
+    ],
+    "rules": [
+      {
+        "name": "The Red Is Not Text Rule",
+        "body": "Red on navy is about 1.6:1 contrast, which is unreadable. Red is a fill, an underline, or a mark. Never a word on navy.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Plus One Rule",
+        "body": "Navy, cream, red. Any new color, even a \"subtle\" one, breaks the system. Lighter or darker versions come from mixing navy and cream.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Typeface Rule",
+        "body": "MuseoModerno only. Hierarchy comes from size and weight, never a second font.",
+        "section": "typography"
+      },
+      {
+        "name": "The Sentence Case Rule",
+        "body": "Headings are sentence case. No all-caps headings.",
+        "section": "typography"
+      },
+      {
+        "name": "The Big Jump Rule",
+        "body": "Type is either small and exact or huge and cropped. Don't fill the middle with medium-large headings.",
+        "section": "typography"
+      },
+      {
+        "name": "The Lean Rule",
+        "body": "Layouts lean to one side or bleed off an edge. Even margins on both sides is the thing to avoid.",
+        "section": "layout"
+      },
+      {
+        "name": "The Flat Rule",
+        "body": "No `box-shadow`, no `backdrop-filter`, no gradients. If something needs to stand out, give it a solid fill.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** set one word per page too big for the frame and let an edge cut it.",
+      "**Do** build spec info as label-over-value blocks with hairline rules.",
+      "**Do** use red as a fill, a thick underline, or a single mark.",
+      "**Do** place blocks in uneven column spans and let one bleed off an edge.",
+      "**Do** flip text to navy when it sits on a cream fill.",
+      "**Do** keep motion small and short (0.2–0.4s fades and nudges) and turn it off for reduced motion."
+    ],
+    "donts": [
+      "**Don't** use red as text on navy.",
+      "**Don't** add a fourth color, a second typeface, or all-caps headings.",
+      "**Don't** use shadows, glows, gradients, blur, glass, or textures.",
+      "**Don't** center a layout with even margins on both sides.",
+      "**Don't** round corners. Not on buttons, tags, cards, or images.",
+      "**Don't** add icon grids, decorative blobs, or stock imagery to fill space."
+    ]
+  }
+}
