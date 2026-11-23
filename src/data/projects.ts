@@ -11,6 +11,10 @@ export interface Project {
   summary: string;
   // Flat fill for the project card on the home page. Stays inside the palette.
   tone: 'red' | 'cream' | 'deep';
+  // Full-bleed hero image. Put the file in /public/work/ and use '/work/name.jpg'.
+  // Until there's an image, the hero shows the flat tone fill instead.
+  image?: string;
+  imageAlt?: string;
 }
 
 export const projects: Project[] = [

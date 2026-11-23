@@ -34,13 +34,40 @@ const reviews = [
 
 <Base>
   <!-- ---------- Hero ---------- -->
-  <header class="hero">
+  <!--
+    Full-bleed frame: the active project fills the whole screen, edge to edge.
+    The bar at the bottom switches projects. Without JS, the first project shows.
+  -->
+  <header
+    class="hero"
+    data-tone={projects[0].tone}
+    data-slugs={JSON.stringify(projects.map((p) => p.slug))}
+    data-tones={JSON.stringify(projects.map((p) => p.tone))}
+  >
+    <div class="slides">
+      {
+        projects.map((p, i) => (
+          <div
+            class:list={['slide', `tone-${p.tone}`]}
+            data-slide={i}
+            data-active={i === 0 ? '' : undefined}
+          >
+            {p.image ? (
+              <img src={p.image} alt={p.imageAlt ?? ''} loading={i === 0 ? 'eager' : 'lazy'} />
+            ) : (
+              <span class="label slide-note">{p.title}: full-bleed image goes here</span>
+            )}
+          </div>
+        ))
+      }
+    </div>
+
     <h1 class="mega" aria-label="Anthony Wekwert">
       <span aria-hidden="true">Wekwert</span>
     </h1>
 
     <div class="strip">
-      <p class="label who">Anthony Wekwert<br />Senior design student, Michigan State</p>
+      <p class="who">Anthony Wekwert<br />Senior design student, Michigan State</p>
 
       <div class="intro">
         <p>Placeholder intro. One sentence on what Anthony makes and who for.</p>
@@ -50,10 +77,70 @@ const reviews = [
           <a href="#contact">Contact</a>
         </nav>
       </div>
+    </div>
 
-      <p class="url">anthonywekwert.com</p>
+    <!-- Bottom bar: switcher, spec cells, one call to action. Flat, square, no blur. -->
+    <div class="bar">
+      <div class="switch" role="group" aria-label="Featured project">
+        {
+          projects.map((p, i) => (
+            <button type="button" data-pick={i} aria-pressed={i === 0 ? 'true' : 'false'}>
+              <span class:list={['swatch', `tone-${p.tone}`]} aria-hidden="true">
+                {p.image && <img src={p.image} alt="" />}
+              </span>
+              {p.title}
+            </button>
+          ))
+        }
+      </div>
+
+      {
+        projects.map((p, i) => (
+          <dl class="spec" data-spec={i} hidden={i !== 0}>
+            <div>
+              <dt class="label">Discipline</dt>
+              <dd>{p.discipline}</dd>
+            </div>
+            <div class="spec-role">
+              <dt class="label">Role</dt>
+              <dd>{p.role}</dd>
+            </div>
+            <div>
+              <dt class="label">Year</dt>
+              <dd>{p.year}</dd>
+            </div>
+          </dl>
+        ))
+      }
+
+      <a class="go" href={`/work/${projects[0].slug}`} data-go>
+        View project <span aria-hidden="true">→</span>
+      </a>
     </div>
   </header>
+
+  <script>
+    const hero = document.querySelector<HTMLElement>('.hero');
+    if (hero) {
+      const slides = hero.querySelectorAll<HTMLElement>('[data-slide]');
+      const specs = hero.querySelectorAll<HTMLElement>('[data-spec]');
+      const picks = hero.querySelectorAll<HTMLButtonElement>('[data-pick]');
+      const go = hero.querySelector<HTMLAnchorElement>('[data-go]');
+      const slugs = JSON.parse(hero.dataset.slugs ?? '[]') as string[];
+      const tones = JSON.parse(hero.dataset.tones ?? '[]') as string[];
+
+      picks.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const n = Number(btn.dataset.pick);
+          slides.forEach((s, i) => s.toggleAttribute('data-active', i === n));
+          specs.forEach((s, i) => (s.hidden = i !== n));
+          picks.forEach((b, i) => b.setAttribute('aria-pressed', String(i === n)));
+          hero.dataset.tone = tones[n];
+          if (go) go.href = `/work/${slugs[n]}`;
+        });
+      });
+    }
+  </script>
 
   <main>
     <!-- ---------- Work: starts inside the first screen ---------- -->
@@ -152,6 +239,54 @@ const reviews = [
   .hero {
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100svh;
+    min-height: 34rem;
+    color: var(--cream);
+    transition: color 0.3s ease;
+  }
+  /* Type flips to navy when the frame behind it is cream. */
+  .hero[data-tone='cream'] {
+    color: var(--navy);
+  }
+
+  /* ---------- Full-bleed frame ---------- */
+
+  .slides {
+    position: absolute;
+    inset: 0;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .slide[data-active] {
+    opacity: 1;
+  }
+
+  .slide img {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+  }
+
+  .slide-note {
+    position: absolute;
+    right: var(--gutter);
+    top: 50%;
+    color: inherit;
+    opacity: 0.6;
+  }
+
+  .mega,
+  .strip,
+  .bar {
+    position: relative;
   }
 
   /*
@@ -179,7 +314,9 @@ const reviews = [
 
   .who {
     grid-column: 1 / span 4;
+    font-size: var(--t-xs);
     line-height: 1.4;
+    opacity: 0.75;
   }
 
   .intro {
@@ -197,11 +334,148 @@ const reviews = [
     font-weight: var(--w-heavy);
   }
 
-  .url {
-    grid-column: 11 / -1;
-    justify-self: end;
-    font-size: var(--t-xs);
-    font-weight: var(--w-light);
+  /* ---------- Bottom bar ---------- */
+
+  /*
+    Sits inside the frame, inset by the gutter, so the image still runs
+    to every edge around it. Solid navy, square corners, hairline dividers.
+  */
+  .bar {
+    margin: auto var(--gutter) var(--gutter);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    background: var(--navy);
+    color: var(--cream);
+    border: 1px solid var(--rule);
+  }
+
+  .switch {
+    display: flex;
+    border-right: 1px solid var(--rule);
+  }
+
+  .switch button {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding: var(--s-3) var(--s-4) var(--s-3) var(--s-3);
+    border: 0;
+    border-right: 1px solid var(--rule);
+    background: transparent;
+    color: var(--ink-soft);
+    font: inherit;
+    font-size: var(--t-sm);
+    font-weight: var(--w-heavy);
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .switch button:last-child {
+    border-right: 0;
+  }
+  .switch button:hover {
+    color: var(--cream);
+  }
+  .switch button[aria-pressed='true'] {
+    background: var(--cream);
+    color: var(--navy);
+  }
+  .switch button:focus-visible {
+    outline: 2px solid var(--cream);
+    outline-offset: -4px;
+  }
+  .switch button[aria-pressed='true']:focus-visible {
+    outline-color: var(--navy);
+  }
+
+  /* Tiny square of the project: its image, or its tone fill. */
+  .swatch {
+    flex: none;
+    width: 1.75rem;
+    height: 1.75rem;
+    overflow: hidden;
+    outline: 1px solid var(--rule);
+  }
+  .swatch img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .spec {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    justify-content: start;
+  }
+  .spec[hidden] {
+    display: none;
+  }
+  .spec div {
+    padding: var(--s-2) var(--s-5) var(--s-2) var(--s-3);
+    border-right: 1px solid var(--rule);
+    display: grid;
+    align-content: center;
+  }
+  .spec dd {
+    margin: 0;
+    font-size: var(--t-sm);
+    font-weight: var(--w-heavy);
+    line-height: var(--lh-tight);
+  }
+
+  /* The one solid call to action. Cream block, navy type. */
+  .go {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding: 0 var(--s-5);
+    background: var(--cream);
+    color: var(--navy);
+    font-size: var(--t-sm);
+    font-weight: var(--w-heavy);
+    white-space: nowrap;
+  }
+  .go span {
+    transition: transform 0.2s ease;
+  }
+  .go:hover span {
+    transform: translateX(0.25rem);
+  }
+  .go:focus-visible {
+    outline-offset: -4px;
+    outline-color: var(--navy);
+  }
+
+  .spec dd {
+    white-space: nowrap;
+  }
+  .spec {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  /* Laptop and tablet widths: drop the role cell and tighten padding. */
+  @media (max-width: 1100px) {
+    .spec-role {
+      display: none !important;
+    }
+    .switch button {
+      padding-right: var(--s-3);
+    }
+    .spec div {
+      padding-right: var(--s-4);
+    }
+    .go {
+      padding: 0 var(--s-4);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero,
+    .slide,
+    .go span {
+      transition: none;
+    }
   }
 
   /* Red as an underline only. Red text on navy is too dark to read. */
@@ -487,8 +761,32 @@ const reviews = [
       grid-column: 1 / -1;
       grid-row: 1;
     }
-    .url {
-      grid-column: 2;
+    .who {
+      grid-column: 1 / -1;
+    }
+
+    /* Bar stacks: switcher on top, specs and button under it. */
+    .bar {
+      grid-template-columns: 1fr auto;
+    }
+    .switch {
+      grid-column: 1 / -1;
+      border-right: 0;
+      border-bottom: 1px solid var(--rule);
+      overflow-x: auto;
+    }
+    .switch button {
+      flex: 1;
+      padding: var(--s-2) var(--s-3) var(--s-2) var(--s-2);
+    }
+    .spec {
+      grid-template-columns: repeat(2, auto);
+    }
+    .spec-role {
+      display: none !important;
+    }
+    .go {
+      padding: var(--s-3) var(--s-4);
     }
 
     .work {
